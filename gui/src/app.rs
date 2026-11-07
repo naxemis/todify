@@ -12,3 +12,24 @@
 // todo(gui): Handle the load error choice: switch mode, or call load_lists again on retry
 
 // todo(gui): After a load error, ask the user to choose: read-only mode, work anyway, or retry loading. Read-only blocks all mutations and every save path
+
+use iced::{Element, Task};
+
+#[derive(Debug, Clone)]
+pub enum Message {}
+
+pub struct App;
+
+impl App {
+    pub fn new() -> Self {
+        Self
+    }
+
+    pub fn update(&mut self, _message: Message) -> Task<Message> {
+        Task::none()
+    }
+
+    pub fn view(&self) -> Element<'_, Message> {
+        iced::widget::text("todify").into()
+    }
+}
