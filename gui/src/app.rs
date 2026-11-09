@@ -2,6 +2,10 @@
 //  - The selected list lives in App, not in the List screen variant, so it survives navigation.
 //  - Deleting the selected list clears the selection and the list screen shows an empty state.
 //  - Deletion asks for confirmation first; the pending action is stored in App.
+//  - lists is absent until the first load finishes and present, possibly empty, afterwards; screens read
+//    that from App and keep no loading flag of their own.
+//  - new starts the first load as well; its result arrives as a message, the same path as a retry after
+//    a load error.
 
 // todo(gui): Mark App dirty on data change; save on Ctrl+S, 5 seconds after the last change, and on window close
 //  - Saving on Ctrl+S, 5 seconds after the last change, and on window close keeps
@@ -11,7 +15,7 @@
 
 // todo(gui): Handle the load error choice: switch mode, or call load_lists again on retry
 
-// todo(gui): After a load error, ask the user to choose: read-only mode, work anyway, or retry loading. Read-only blocks all mutations and every save path
+// todo(gui): After a load error, ask the user to choose: read-only mode, work anyway, or retry loading.
 
 use iced::{Element, Task};
 
