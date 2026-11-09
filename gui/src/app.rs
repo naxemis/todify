@@ -17,6 +17,12 @@
 
 // todo(gui): After a load error, ask the user to choose: read-only mode, work anyway, or retry loading.
 
+// todo(gui): Localized error messages
+//   - Trigger: a second language, or the same wording repeated in several places
+//   - Catalog: gui/locales/*.json, embedded with include_str!, keys -> template with placeholders
+//   - Mapping: StorageError variant -> key stays in one function in this layer
+//   - Constraint: core holds no user-facing text; error variants keep data, not formatted strings
+
 use iced::{Element, Task};
 
 #[derive(Debug, Clone)]
