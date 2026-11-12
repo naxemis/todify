@@ -35,7 +35,7 @@ cargo build
 ## Running
 Run the application with:
 ```bash
-cargo run -p gui
+cargo run -p todify-gui
 ```
 
 ## Testing
