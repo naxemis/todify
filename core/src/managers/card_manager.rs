@@ -137,10 +137,7 @@ impl CardManager {
     }
 
     fn is_valid_place_for_move(&self, new_place: u16) -> bool {
-        if usize::from(new_place) >= self.cards.len() {
-            return false;
-        }
-        true
+        usize::from(new_place) < self.cards.len()
     }
 
     pub(crate) fn move_to(&mut self, id: u16, new_place: u16) -> Result<u16, CardError> {
