@@ -1,6 +1,3 @@
-// todo(app): Define App with shared state (settings, lists, warnings, current error), a Screen enum and a top-level Message.
-// todo(app): Keep update and view as placeholders; check with cargo run that the window opens (every next todo is checked the same way).
-// todo(app/new): Start the first load as a Task; its result arrives as a Message (the same path a retry uses later).
 // todo(app): Lists are absent until the first load finishes, then present (possibly empty); screens never keep their own loading flag.
 // todo(core/local_storage/startup): Write startup_lists.json as the startup snapshot; nothing writes it yet.
 
@@ -49,6 +46,7 @@ pub mod widgets;
 
 fn main() -> iced::Result {
     iced::application(App::new, App::update, App::view)
-        .title("todify")
+        .title("Todify")
+        .window_size((640, 480))
         .run()
 }
