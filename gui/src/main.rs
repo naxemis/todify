@@ -1,5 +1,3 @@
-// todo(core/local_storage/startup): Write startup_lists.json as the startup snapshot; nothing writes it yet.
-
 // todo(screens/welcome): Add the welcome screen state, messages and view.
 // todo(screens/home): Add list selection and create/rename/delete of lists.
 // todo(widgets/sidebar): Show all lists and emit a Message on selection.
