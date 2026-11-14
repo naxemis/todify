@@ -5,7 +5,7 @@ use crate::errors::card_error::CardError;
 use crate::errors::card_move_error::CardMoveError;
 use crate::models::card::Card;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub(crate) struct CardManager {
     cards: BTreeMap<u16, Card>,
     next_id: u32,
@@ -137,10 +137,7 @@ impl CardManager {
     }
 
     fn is_valid_place_for_move(&self, new_place: u16) -> bool {
-        if usize::from(new_place) >= self.cards.len() {
-            return false;
-        }
-        true
+        usize::from(new_place) < self.cards.len()
     }
 
     pub(crate) fn move_to(&mut self, id: u16, new_place: u16) -> Result<u16, CardError> {

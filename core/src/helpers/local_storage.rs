@@ -7,19 +7,27 @@ use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-/// On-disk layout of `lists.json`: the format version followed by the list data.
+/// On-disk layout of the lists files: the format version followed by the list data.
+///
+/// `lists.json` and `startup_lists.json` are written with this layout. `presave_lists.json`
+/// is a byte copy of `lists.json`, so it has the same layout.
 ///
 /// The fields of [`ListManager`] are flattened into the same JSON object.
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 struct ListsFile<'manager> {
     format_version: u16,
     #[serde(flatten)]
     list_manager: &'manager ListManager,
 }
 
-/// Stores the lists file in the application's data directory.
+/// Stores the lists files in the application's data directory.
 ///
-/// Files are stored in a `todify` subdirectory of the platform data directory.
+/// Files are stored in a `todify` subdirectory of the platform data directory:
+///
+/// - `lists.json` holds the current lists.
+/// - `presave_lists.json` holds the previous valid `lists.json`, copied before each save.
+/// - `startup_lists.json` holds a snapshot of the lists taken at application startup.
+///
 /// Each write goes to a temporary file first and then replaces the target, so an
 /// interrupted write does not leave a partially written file behind.
 ///
@@ -33,10 +41,11 @@ pub struct LocalStorage {
     presave_lists_path: PathBuf,
     temp_presave_lists_path: PathBuf,
     startup_lists_path: PathBuf,
+    temp_startup_lists_path: PathBuf,
 }
 
 impl LocalStorage {
-    /// Format version written to `lists.json`. Only this version can be loaded.
+    /// Format version written to the lists files. Only this version can be loaded.
     pub const FORMAT_VERSION: u16 = 1;
 
     /// Creates storage in the platform data directory.
@@ -48,6 +57,83 @@ impl LocalStorage {
     pub fn new() -> Result<Self, StorageError> {
         let data_directory = data_dir().ok_or(StorageError::DataDirectoryNotFound)?;
         Self::with_data_directory(data_directory)
+    }
+
+    /// Saves `manager` to `lists.json`.
+    ///
+    /// The previous `lists.json` is first copied to `presave_lists.json` when it is valid.
+    ///
+    /// Returns an error if the backup or the write fails. In that case `lists.json` keeps
+    /// its previous content.
+    pub fn save_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
+        self.copy_lists_to_presave()?;
+        self.write_lists(manager, &self.temp_lists_path, &self.lists_path)
+    }
+
+    /// Saves `manager` to `startup_lists.json`.
+    ///
+    /// `lists.json` and `presave_lists.json` are not changed.
+    ///
+    /// Returns [`StorageError::Serialization`] if the data cannot be serialized, or
+    /// [`StorageError::Io`] if the file cannot be written. In that case
+    /// `startup_lists.json` keeps its previous content.
+    pub fn save_startup_snapshot(&self, manager: &ListManager) -> Result<(), StorageError> {
+        self.write_lists(
+            manager,
+            &self.temp_startup_lists_path,
+            &self.startup_lists_path,
+        )
+    }
+
+    /// Loads the lists, falling back to backup copies if `lists.json` cannot be used.
+    ///
+    /// Candidates are tried in this order: `lists.json`, `presave_lists.json`, and
+    /// `startup_lists.json`.
+    ///
+    /// - If `lists.json` loads, returns [`LoadOutcome::Loaded`].
+    /// - If a backup loads, it is written back to `lists.json` and
+    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup. If that write
+    ///   fails, [`StorageError::Io`] is returned and `lists.json` keeps its previous content.
+    /// - If no candidate exists, returns [`LoadOutcome::Missing`].
+    /// - If candidates exist but cannot be parsed, returns the first
+    ///   [`StorageError::Deserialization`] error.
+    ///
+    /// Other errors, such as I/O errors or unsupported format versions, are returned
+    /// immediately without trying the remaining candidates.
+    pub fn load_lists(&self) -> Result<LoadOutcome, StorageError> {
+        let mut first_error: Option<StorageError> = None;
+
+        let candidates = [
+            &self.lists_path,
+            &self.presave_lists_path,
+            &self.startup_lists_path,
+        ];
+
+        for path in candidates {
+            match Self::read_lists_file(path) {
+                Ok(Some(manager)) => {
+                    if path == &self.lists_path {
+                        return Ok(LoadOutcome::Loaded(manager));
+                    }
+
+                    self.write_lists(&manager, &self.temp_lists_path, &self.lists_path)?;
+
+                    return Ok(LoadOutcome::Recovered(manager, path.to_path_buf()));
+                }
+                Ok(None) => {}
+                Err(error @ StorageError::Deserialization { .. }) => {
+                    first_error.get_or_insert(error);
+                }
+                Err(other) => {
+                    return Err(other);
+                }
+            }
+        }
+
+        match first_error {
+            None => Ok(LoadOutcome::Missing),
+            Some(first_error) => Err(first_error),
+        }
     }
 
     /// Creates `path` and any missing parent directories.
@@ -74,6 +160,7 @@ impl LocalStorage {
         let presave_lists_path = app_directory.join("presave_lists.json");
         let temp_presave_lists_path = app_directory.join("temp_presave_lists.json");
         let startup_lists_path = app_directory.join("startup_lists.json");
+        let temp_startup_lists_path = app_directory.join("temp_startup_lists.json");
 
         Self::create_directory(&app_directory)?;
 
@@ -84,13 +171,13 @@ impl LocalStorage {
             presave_lists_path,
             temp_presave_lists_path,
             startup_lists_path,
+            temp_startup_lists_path,
         })
     }
 
     /// Syncs the application directory so that renamed files survive a crash.
     ///
     /// Errors are ignored.
-    // todo(storage): A failed application directory sync should be logged as a warning (waiting for TUI implementation)
     #[cfg(unix)]
     fn sync_app_directory(path: &Path) {
         let Ok(directory) = File::open(path) else {
@@ -151,11 +238,20 @@ impl LocalStorage {
         }
     }
 
-    /// Serializes `manager` with the current format version and replaces `lists.json`.
+    /// Serializes `manager` with the current format version and replaces `target` with it.
+    ///
+    /// The data is written to `temp` first and then renamed to `target`, after which the
+    /// application directory is synced. If writing fails, `target` keeps its previous
+    /// content.
     ///
     /// Returns [`StorageError::Serialization`] if the data cannot be serialized, or
     /// [`StorageError::Io`] if the file cannot be written.
-    fn write_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
+    fn write_lists(
+        &self,
+        manager: &ListManager,
+        temp: &Path,
+        target: &Path,
+    ) -> Result<(), StorageError> {
         let lists_file = ListsFile {
             format_version: Self::FORMAT_VERSION,
             list_manager: manager,
@@ -164,7 +260,7 @@ impl LocalStorage {
         let data = serde_json::to_string(&lists_file)
             .map_err(|source| StorageError::Serialization { source })?;
 
-        self.replace_atomically(data.as_bytes(), &self.temp_lists_path, &self.lists_path)?;
+        self.replace_atomically(data.as_bytes(), temp, target)?;
 
         Self::sync_app_directory(&self.app_directory);
 
@@ -194,17 +290,6 @@ impl LocalStorage {
             },
             Err(error) => Err(error),
         }
-    }
-
-    /// Saves `manager` to `lists.json`.
-    ///
-    /// The previous `lists.json` is first copied to `presave_lists.json` when it is valid.
-    ///
-    /// Returns an error if the backup or the write fails. In that case `lists.json` keeps
-    /// its previous content.
-    pub fn save_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
-        self.copy_lists_to_presave()?;
-        self.write_lists(manager)
     }
 
     /// Parses lists data and checks its format version.
@@ -270,63 +355,8 @@ impl LocalStorage {
             Err(error) => Err(error),
         }
     }
-
-    /// Loads the lists, falling back to backup copies if `lists.json` cannot be used.
-    ///
-    /// Candidates are tried in this order: `lists.json`, `presave_lists.json`, and
-    /// `startup_lists.json`.
-    ///
-    /// - If `lists.json` loads, returns [`LoadOutcome::Loaded`].
-    /// - If a backup loads, it is written back to `lists.json` and
-    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup.
-    /// - If no candidate exists, returns [`LoadOutcome::Missing`].
-    /// - If candidates exist but cannot be parsed, returns the first
-    ///   [`StorageError::Deserialization`] error.
-    ///
-    /// Other errors, such as I/O errors or unsupported format versions, are returned
-    /// immediately without trying the remaining candidates.
-    pub fn load_lists(&self) -> Result<LoadOutcome, StorageError> {
-        let mut first_error: Option<StorageError> = None;
-
-        // todo(storage): nothing writes startup_lists.json yet (waiting for TUI implementation)
-        let candidates = [
-            &self.lists_path,
-            &self.presave_lists_path,
-            &self.startup_lists_path,
-        ];
-
-        for path in candidates {
-            match Self::read_lists_file(path) {
-                Ok(Some(manager)) => {
-                    if path == &self.lists_path {
-                        return Ok(LoadOutcome::Loaded(manager));
-                    }
-
-                    self.write_lists(&manager)?;
-
-                    return Ok(LoadOutcome::Recovered {
-                        manager,
-                        source: path.to_path_buf(),
-                    });
-                }
-                Ok(None) => {}
-                Err(error @ StorageError::Deserialization { .. }) => {
-                    first_error.get_or_insert(error);
-                }
-                Err(other) => {
-                    return Err(other);
-                }
-            }
-        }
-
-        match first_error {
-            None => Ok(LoadOutcome::Missing),
-            Some(first_error) => Err(first_error),
-        }
-    }
 }
 
-// todo(tests): Add startup snapshot and lock tests (waiting for TUI implementation)
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -373,7 +403,7 @@ mod tests {
 
     fn recovered_manager(outcome: LoadOutcome) -> (ListManager, PathBuf) {
         match outcome {
-            LoadOutcome::Recovered { manager, source } => (manager, source),
+            LoadOutcome::Recovered(manager, source) => (manager, source),
             other => panic!("Expected Recovered, got {other:?}"),
         }
     }
@@ -452,10 +482,9 @@ mod tests {
         let storage = storage(&temp);
         write_file(&storage.lists_path, "Invalid JSON");
         write_file(&storage.presave_lists_path, "Invalid JSON");
-        write_manager(
-            &storage.startup_lists_path,
-            &manager_with_lists(&["From startup"]),
-        );
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["From startup"]))
+            .unwrap();
 
         let (manager, source) = recovered_manager(storage.load_lists().unwrap());
 
@@ -796,5 +825,134 @@ mod tests {
             r#","next_id":2}"#,
         );
         assert_eq!(read_file(&storage.lists_path), expected);
+    }
+
+    #[test]
+    fn save_lists_does_not_change_startup_snapshot() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+        let startup_before = read_file(&storage.startup_lists_path);
+        write_manager(&storage.lists_path, &manager_with_lists(&["Old"]));
+
+        storage.save_lists(&manager_with_lists(&["New"])).unwrap();
+
+        assert_eq!(read_file(&storage.startup_lists_path), startup_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_saves_data_that_can_be_read_back_with_next_id() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        let mut saved = manager_with_lists(&["A", "B"]);
+        saved.remove(0);
+
+        storage.save_startup_snapshot(&saved).unwrap();
+
+        let mut written = read_manager(&storage.startup_lists_path);
+        assert_eq!(written.get_by_id(1).unwrap().get_name(), "B");
+        assert_eq!(written.add("C"), Ok(2));
+    }
+
+    #[test]
+    fn save_startup_snapshot_writes_format_version_and_lists_in_id_order() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["A", "B"]))
+            .unwrap();
+
+        let expected = concat!(
+            r#"{"format_version":1,"lists":{"#,
+            r#""0":{"id":0,"name":"A","column_manager":{"columns":{},"next_id":0}},"#,
+            r#""1":{"id":1,"name":"B","column_manager":{"columns":{},"next_id":0}}}"#,
+            r#","next_id":2}"#,
+        );
+        assert_eq!(read_file(&storage.startup_lists_path), expected);
+    }
+
+    #[test]
+    fn save_startup_snapshot_does_not_change_lists_or_presave() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        write_manager(&storage.lists_path, &manager_with_lists(&["Current"]));
+        write_manager(
+            &storage.presave_lists_path,
+            &manager_with_lists(&["Presaved"]),
+        );
+        let lists_before = read_file(&storage.lists_path);
+        let presave_before = read_file(&storage.presave_lists_path);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+
+        assert_eq!(read_file(&storage.lists_path), lists_before);
+        assert_eq!(read_file(&storage.presave_lists_path), presave_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_does_not_create_lists_or_presave_when_missing() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+
+        assert!(!storage.lists_path.exists());
+        assert!(!storage.presave_lists_path.exists());
+    }
+
+    #[test]
+    fn save_startup_snapshot_leaves_no_temp_file_after_successful_save() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["A"]))
+            .unwrap();
+
+        assert!(storage.startup_lists_path.exists());
+        assert!(!storage.temp_startup_lists_path.exists());
+    }
+
+    #[test]
+    fn save_startup_snapshot_returns_io_error_and_keeps_previous_snapshot_when_write_fails() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Old"]))
+            .unwrap();
+        let startup_before = read_file(&storage.startup_lists_path);
+        std::fs::create_dir(&storage.temp_startup_lists_path).unwrap();
+
+        match storage.save_startup_snapshot(&manager_with_lists(&["New"])) {
+            Err(StorageError::Io { path, .. }) => {
+                assert_eq!(path, storage.temp_startup_lists_path);
+            }
+            other => panic!("Expected Io error, got {other:?}"),
+        }
+
+        assert_eq!(read_file(&storage.startup_lists_path), startup_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_replaces_existing_snapshot() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Old"]))
+            .unwrap();
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["New"]))
+            .unwrap();
+
+        let written = read_manager(&storage.startup_lists_path);
+        assert_eq!(written.get_by_id(0).unwrap().get_name(), "New");
     }
 }
