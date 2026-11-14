@@ -1,3 +1,4 @@
+// Before this block: sketch the layout of welcome, home and list screens (sidebar, table, empty state, where dialogs and toasts appear).
 // todo(screens/welcome): Add the welcome screen state, messages and view.
 // todo(screens/home): Add list selection and create/rename/delete of lists.
 // todo(widgets/sidebar): Show all lists and emit a Message on selection.
@@ -6,12 +7,14 @@
 // todo(widgets/table): Show the selected list's items in a table, borrowing data from App.
 // todo(screens/list): Show an empty state when no list is selected.
 
+// Before this block: add one place for shared visual values (spacing, radii, button styles); overlays use it from the start.
 // todo(overlays/dialog): Add a shared dialog frame (title, body, button row) that returns only the user's choice.
 // todo(overlays/confirm): Add a confirmation dialog with a message and confirm/cancel buttons.
 // todo(app): Store the pending action in App; the dialog never knows what it controls.
 // todo(widgets/sidebar): Give each list a delete action that asks for confirmation first.
 // todo(app): Deleting the selected list clears the selection.
 
+// Before this block: decide whether the theme (light/dark) is a user preference shown in settings.
 // todo(screens/settings): Add the settings screen state, messages and view.
 
 // todo(app/mode): Add a working mode (normal or read-only); every save path checks it before writing.
@@ -28,6 +31,7 @@
 // todo(core/local_storage/save): Before the first save after a corrupt lists.json, keep the corrupt file as a timestamped copy.
 // todo(overlays/toast): Show warnings as a toast that dismisses itself.
 // todo(core/local_storage/sync): Report a failed application directory sync as a warning instead of ignoring it.
+// After this block: all screens and overlays exist; make the mockups and set colors, fonts and final spacing.
 
 // todo(app/errors): Later - localize error messages once a second language or repeated wording appears.
 // todo(app/errors): Keep a gui/locales/*.json catalog embedded with include_str!, and map StorageError to a key in one function.
