@@ -21,10 +21,12 @@ pub enum Screen {
     Settings,
 }
 
+#[allow(dead_code)]
 enum Warning {
     ListsRecovered(PathBuf),
 }
 
+#[allow(dead_code)]
 enum Error {
     ListsLoadFailed(Arc<StorageError>),
 }
