@@ -302,10 +302,7 @@ impl LocalStorage {
 
                     self.write_lists(&manager)?;
 
-                    return Ok(LoadOutcome::Recovered {
-                        manager,
-                        source: path.to_path_buf(),
-                    });
+                    return Ok(LoadOutcome::Recovered(manager, path.to_path_buf()));
                 }
                 Ok(None) => {}
                 Err(error @ StorageError::Deserialization { .. }) => {
@@ -370,7 +367,7 @@ mod tests {
 
     fn recovered_manager(outcome: LoadOutcome) -> (ListManager, PathBuf) {
         match outcome {
-            LoadOutcome::Recovered { manager, source } => (manager, source),
+            LoadOutcome::Recovered(manager, source) => (manager, source),
             other => panic!("Expected Recovered, got {other:?}"),
         }
     }

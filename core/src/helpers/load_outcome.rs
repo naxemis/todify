@@ -6,10 +6,7 @@ use crate::managers::list_manager::ListManager;
 #[derive(Clone)]
 pub enum LoadOutcome {
     Loaded(ListManager),
-    Recovered {
-        manager: ListManager,
-        source: PathBuf,
-    },
+    Recovered(ListManager, PathBuf),
     Missing,
 }
 
@@ -19,7 +16,7 @@ impl fmt::Debug for LoadOutcome {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Loaded(_) => f.write_str("Loaded(..)"),
-            Self::Recovered { source, .. } => {
+            Self::Recovered(.., source) => {
                 write!(f, "Recovered {{ source: {} }}", source.display())
             }
             Self::Missing => f.write_str("Missing"),
