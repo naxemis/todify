@@ -7,7 +7,10 @@ use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-/// On-disk layout of `lists.json`: the format version followed by the list data.
+/// On-disk layout of the lists files: the format version followed by the list data.
+///
+/// `lists.json` and `startup_lists.json` are written with this layout. `presave_lists.json`
+/// is a byte copy of `lists.json`, so it has the same layout.
 ///
 /// The fields of [`ListManager`] are flattened into the same JSON object.
 #[derive(Serialize, Clone)]
@@ -17,9 +20,14 @@ struct ListsFile<'manager> {
     list_manager: &'manager ListManager,
 }
 
-/// Stores the lists file in the application's data directory.
+/// Stores the lists files in the application's data directory.
 ///
-/// Files are stored in a `todify` subdirectory of the platform data directory.
+/// Files are stored in a `todify` subdirectory of the platform data directory:
+///
+/// - `lists.json` holds the current lists.
+/// - `presave_lists.json` holds the previous valid `lists.json`, copied before each save.
+/// - `startup_lists.json` holds a snapshot of the lists taken at application startup.
+///
 /// Each write goes to a temporary file first and then replaces the target, so an
 /// interrupted write does not leave a partially written file behind.
 ///
@@ -37,7 +45,7 @@ pub struct LocalStorage {
 }
 
 impl LocalStorage {
-    /// Format version written to `lists.json`. Only this version can be loaded.
+    /// Format version written to the lists files. Only this version can be loaded.
     pub const FORMAT_VERSION: u16 = 1;
 
     /// Creates storage in the platform data directory.
@@ -62,6 +70,13 @@ impl LocalStorage {
         self.write_lists(manager, &self.temp_lists_path, &self.lists_path)
     }
 
+    /// Saves `manager` to `startup_lists.json`.
+    ///
+    /// `lists.json` and `presave_lists.json` are not changed.
+    ///
+    /// Returns [`StorageError::Serialization`] if the data cannot be serialized, or
+    /// [`StorageError::Io`] if the file cannot be written. In that case
+    /// `startup_lists.json` keeps its previous content.
     pub fn save_startup_snapshot(&self, manager: &ListManager) -> Result<(), StorageError> {
         self.write_lists(
             manager,
@@ -77,7 +92,8 @@ impl LocalStorage {
     ///
     /// - If `lists.json` loads, returns [`LoadOutcome::Loaded`].
     /// - If a backup loads, it is written back to `lists.json` and
-    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup.
+    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup. If that write
+    ///   fails, [`StorageError::Io`] is returned and `lists.json` keeps its previous content.
     /// - If no candidate exists, returns [`LoadOutcome::Missing`].
     /// - If candidates exist but cannot be parsed, returns the first
     ///   [`StorageError::Deserialization`] error.
@@ -222,15 +238,19 @@ impl LocalStorage {
         }
     }
 
-    /// Serializes `manager` with the current format version and replaces `lists.json`.
+    /// Serializes `manager` with the current format version and replaces `target` with it.
+    ///
+    /// The data is written to `temp` first and then renamed to `target`, after which the
+    /// application directory is synced. If writing fails, `target` keeps its previous
+    /// content.
     ///
     /// Returns [`StorageError::Serialization`] if the data cannot be serialized, or
     /// [`StorageError::Io`] if the file cannot be written.
     fn write_lists(
         &self,
         manager: &ListManager,
-        temp_list: &Path,
-        target_list: &Path,
+        temp: &Path,
+        target: &Path,
     ) -> Result<(), StorageError> {
         let lists_file = ListsFile {
             format_version: Self::FORMAT_VERSION,
@@ -240,7 +260,7 @@ impl LocalStorage {
         let data = serde_json::to_string(&lists_file)
             .map_err(|source| StorageError::Serialization { source })?;
 
-        self.replace_atomically(data.as_bytes(), temp_list, target_list)?;
+        self.replace_atomically(data.as_bytes(), temp, target)?;
 
         Self::sync_app_directory(&self.app_directory);
 
@@ -462,10 +482,9 @@ mod tests {
         let storage = storage(&temp);
         write_file(&storage.lists_path, "Invalid JSON");
         write_file(&storage.presave_lists_path, "Invalid JSON");
-        write_manager(
-            &storage.startup_lists_path,
-            &manager_with_lists(&["From startup"]),
-        );
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["From startup"]))
+            .unwrap();
 
         let (manager, source) = recovered_manager(storage.load_lists().unwrap());
 
