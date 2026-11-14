@@ -1,4 +1,3 @@
-// todo(app): Lists are absent until the first load finishes, then present (possibly empty); screens never keep their own loading flag.
 // todo(core/local_storage/startup): Write startup_lists.json as the startup snapshot; nothing writes it yet.
 
 // todo(screens/welcome): Add the welcome screen state, messages and view.

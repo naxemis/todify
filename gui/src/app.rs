@@ -1,5 +1,6 @@
 use crate::app::Screen::Welcome;
 use iced::{Element, Task};
+use std::path::PathBuf;
 use std::sync::Arc;
 use todify_core::errors::storage_error::StorageError;
 use todify_core::helpers::load_outcome::LoadOutcome;
@@ -20,9 +21,13 @@ pub enum Screen {
     Settings,
 }
 
-enum Warning {}
+enum Warning {
+    ListsRecovered(PathBuf),
+}
 
-enum Error {}
+enum Error {
+    ListsLoadFailed(Arc<StorageError>),
+}
 
 #[allow(dead_code)]
 pub struct App {
@@ -52,8 +57,31 @@ impl App {
         )
     }
 
-    pub fn update(&mut self, _message: Message) -> Task<Message> {
-        Task::none()
+    pub fn update(&mut self, message: Message) -> Task<Message> {
+        match message {
+            Message::ListsLoaded(Ok(loaded_lists)) => {
+                match loaded_lists {
+                    LoadOutcome::Loaded(manager) => {
+                        self.lists = Some(manager);
+                    }
+                    LoadOutcome::Recovered(manager, path) => {
+                        self.lists = Some(manager);
+                        self.warnings.push(Warning::ListsRecovered(path));
+                    }
+                    LoadOutcome::Missing => self.lists = Some(ListManager::new()),
+                }
+
+                Task::none()
+            }
+            Message::ListsLoaded(Err(error)) => {
+                let a = Error::ListsLoadFailed(error);
+                let b = Some(a);
+
+                self.current_error = b;
+
+                Task::none()
+            }
+        }
     }
 
     pub fn view(&self) -> Element<'_, Message> {
