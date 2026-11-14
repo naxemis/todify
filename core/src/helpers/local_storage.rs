@@ -807,4 +807,133 @@ mod tests {
         );
         assert_eq!(read_file(&storage.lists_path), expected);
     }
+
+    #[test]
+    fn save_lists_does_not_change_startup_snapshot() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+        let startup_before = read_file(&storage.startup_lists_path);
+        write_manager(&storage.lists_path, &manager_with_lists(&["Old"]));
+
+        storage.save_lists(&manager_with_lists(&["New"])).unwrap();
+
+        assert_eq!(read_file(&storage.startup_lists_path), startup_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_saves_data_that_can_be_read_back_with_next_id() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        let mut saved = manager_with_lists(&["A", "B"]);
+        saved.remove(0);
+
+        storage.save_startup_snapshot(&saved).unwrap();
+
+        let mut written = read_manager(&storage.startup_lists_path);
+        assert_eq!(written.get_by_id(1).unwrap().get_name(), "B");
+        assert_eq!(written.add("C"), Ok(2));
+    }
+
+    #[test]
+    fn save_startup_snapshot_writes_format_version_and_lists_in_id_order() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["A", "B"]))
+            .unwrap();
+
+        let expected = concat!(
+            r#"{"format_version":1,"lists":{"#,
+            r#""0":{"id":0,"name":"A","column_manager":{"columns":{},"next_id":0}},"#,
+            r#""1":{"id":1,"name":"B","column_manager":{"columns":{},"next_id":0}}}"#,
+            r#","next_id":2}"#,
+        );
+        assert_eq!(read_file(&storage.startup_lists_path), expected);
+    }
+
+    #[test]
+    fn save_startup_snapshot_does_not_change_lists_or_presave() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        write_manager(&storage.lists_path, &manager_with_lists(&["Current"]));
+        write_manager(
+            &storage.presave_lists_path,
+            &manager_with_lists(&["Presaved"]),
+        );
+        let lists_before = read_file(&storage.lists_path);
+        let presave_before = read_file(&storage.presave_lists_path);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+
+        assert_eq!(read_file(&storage.lists_path), lists_before);
+        assert_eq!(read_file(&storage.presave_lists_path), presave_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_does_not_create_lists_or_presave_when_missing() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Startup"]))
+            .unwrap();
+
+        assert!(!storage.lists_path.exists());
+        assert!(!storage.presave_lists_path.exists());
+    }
+
+    #[test]
+    fn save_startup_snapshot_leaves_no_temp_file_after_successful_save() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["A"]))
+            .unwrap();
+
+        assert!(storage.startup_lists_path.exists());
+        assert!(!storage.temp_startup_lists_path.exists());
+    }
+
+    #[test]
+    fn save_startup_snapshot_returns_io_error_and_keeps_previous_snapshot_when_write_fails() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Old"]))
+            .unwrap();
+        let startup_before = read_file(&storage.startup_lists_path);
+        std::fs::create_dir(&storage.temp_startup_lists_path).unwrap();
+
+        match storage.save_startup_snapshot(&manager_with_lists(&["New"])) {
+            Err(StorageError::Io { path, .. }) => {
+                assert_eq!(path, storage.temp_startup_lists_path);
+            }
+            other => panic!("Expected Io error, got {other:?}"),
+        }
+
+        assert_eq!(read_file(&storage.startup_lists_path), startup_before);
+    }
+
+    #[test]
+    fn save_startup_snapshot_replaces_existing_snapshot() {
+        let temp = TempDir::new().unwrap();
+        let storage = storage(&temp);
+
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["Old"]))
+            .unwrap();
+        storage
+            .save_startup_snapshot(&manager_with_lists(&["New"]))
+            .unwrap();
+
+        let written = read_manager(&storage.startup_lists_path);
+        assert_eq!(written.get_by_id(0).unwrap().get_name(), "New");
+    }
 }
