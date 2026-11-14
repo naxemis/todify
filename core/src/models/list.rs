@@ -8,7 +8,7 @@ use crate::models::card::Card;
 use crate::models::column::Column;
 
 /// A to-do list identified by a numeric ID and a name.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct List {
     id: u16,
     name: String,

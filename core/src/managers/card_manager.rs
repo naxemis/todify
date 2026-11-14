@@ -5,7 +5,7 @@ use crate::errors::card_error::CardError;
 use crate::errors::card_move_error::CardMoveError;
 use crate::models::card::Card;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub(crate) struct CardManager {
     cards: BTreeMap<u16, Card>,
     next_id: u32,

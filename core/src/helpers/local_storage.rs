@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 /// On-disk layout of `lists.json`: the format version followed by the list data.
 ///
 /// The fields of [`ListManager`] are flattened into the same JSON object.
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 struct ListsFile<'manager> {
     format_version: u16,
     #[serde(flatten)]

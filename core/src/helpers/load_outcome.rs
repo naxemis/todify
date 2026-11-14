@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use crate::managers::list_manager::ListManager;
 
+#[derive(Clone)]
 pub enum LoadOutcome {
     Loaded(ListManager),
     Recovered {
