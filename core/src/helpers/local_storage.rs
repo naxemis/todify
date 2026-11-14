@@ -33,6 +33,7 @@ pub struct LocalStorage {
     presave_lists_path: PathBuf,
     temp_presave_lists_path: PathBuf,
     startup_lists_path: PathBuf,
+    temp_startup_lists_path: PathBuf,
 }
 
 impl LocalStorage {
@@ -48,6 +49,75 @@ impl LocalStorage {
     pub fn new() -> Result<Self, StorageError> {
         let data_directory = data_dir().ok_or(StorageError::DataDirectoryNotFound)?;
         Self::with_data_directory(data_directory)
+    }
+
+    /// Saves `manager` to `lists.json`.
+    ///
+    /// The previous `lists.json` is first copied to `presave_lists.json` when it is valid.
+    ///
+    /// Returns an error if the backup or the write fails. In that case `lists.json` keeps
+    /// its previous content.
+    pub fn save_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
+        self.copy_lists_to_presave()?;
+        self.write_lists(manager, &self.temp_lists_path, &self.lists_path)
+    }
+
+    pub fn save_startup_snapshot(&self, manager: &ListManager) -> Result<(), StorageError> {
+        self.write_lists(
+            manager,
+            &self.temp_startup_lists_path,
+            &self.startup_lists_path,
+        )
+    }
+
+    /// Loads the lists, falling back to backup copies if `lists.json` cannot be used.
+    ///
+    /// Candidates are tried in this order: `lists.json`, `presave_lists.json`, and
+    /// `startup_lists.json`.
+    ///
+    /// - If `lists.json` loads, returns [`LoadOutcome::Loaded`].
+    /// - If a backup loads, it is written back to `lists.json` and
+    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup.
+    /// - If no candidate exists, returns [`LoadOutcome::Missing`].
+    /// - If candidates exist but cannot be parsed, returns the first
+    ///   [`StorageError::Deserialization`] error.
+    ///
+    /// Other errors, such as I/O errors or unsupported format versions, are returned
+    /// immediately without trying the remaining candidates.
+    pub fn load_lists(&self) -> Result<LoadOutcome, StorageError> {
+        let mut first_error: Option<StorageError> = None;
+
+        let candidates = [
+            &self.lists_path,
+            &self.presave_lists_path,
+            &self.startup_lists_path,
+        ];
+
+        for path in candidates {
+            match Self::read_lists_file(path) {
+                Ok(Some(manager)) => {
+                    if path == &self.lists_path {
+                        return Ok(LoadOutcome::Loaded(manager));
+                    }
+
+                    self.write_lists(&manager, &self.temp_lists_path, &self.lists_path)?;
+
+                    return Ok(LoadOutcome::Recovered(manager, path.to_path_buf()));
+                }
+                Ok(None) => {}
+                Err(error @ StorageError::Deserialization { .. }) => {
+                    first_error.get_or_insert(error);
+                }
+                Err(other) => {
+                    return Err(other);
+                }
+            }
+        }
+
+        match first_error {
+            None => Ok(LoadOutcome::Missing),
+            Some(first_error) => Err(first_error),
+        }
     }
 
     /// Creates `path` and any missing parent directories.
@@ -74,6 +144,7 @@ impl LocalStorage {
         let presave_lists_path = app_directory.join("presave_lists.json");
         let temp_presave_lists_path = app_directory.join("temp_presave_lists.json");
         let startup_lists_path = app_directory.join("startup_lists.json");
+        let temp_startup_lists_path = app_directory.join("temp_startup_lists.json");
 
         Self::create_directory(&app_directory)?;
 
@@ -84,6 +155,7 @@ impl LocalStorage {
             presave_lists_path,
             temp_presave_lists_path,
             startup_lists_path,
+            temp_startup_lists_path,
         })
     }
 
@@ -154,7 +226,12 @@ impl LocalStorage {
     ///
     /// Returns [`StorageError::Serialization`] if the data cannot be serialized, or
     /// [`StorageError::Io`] if the file cannot be written.
-    fn write_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
+    fn write_lists(
+        &self,
+        manager: &ListManager,
+        temp_list: &Path,
+        target_list: &Path,
+    ) -> Result<(), StorageError> {
         let lists_file = ListsFile {
             format_version: Self::FORMAT_VERSION,
             list_manager: manager,
@@ -163,7 +240,7 @@ impl LocalStorage {
         let data = serde_json::to_string(&lists_file)
             .map_err(|source| StorageError::Serialization { source })?;
 
-        self.replace_atomically(data.as_bytes(), &self.temp_lists_path, &self.lists_path)?;
+        self.replace_atomically(data.as_bytes(), temp_list, target_list)?;
 
         Self::sync_app_directory(&self.app_directory);
 
@@ -193,17 +270,6 @@ impl LocalStorage {
             },
             Err(error) => Err(error),
         }
-    }
-
-    /// Saves `manager` to `lists.json`.
-    ///
-    /// The previous `lists.json` is first copied to `presave_lists.json` when it is valid.
-    ///
-    /// Returns an error if the backup or the write fails. In that case `lists.json` keeps
-    /// its previous content.
-    pub fn save_lists(&self, manager: &ListManager) -> Result<(), StorageError> {
-        self.copy_lists_to_presave()?;
-        self.write_lists(manager)
     }
 
     /// Parses lists data and checks its format version.
@@ -267,56 +333,6 @@ impl LocalStorage {
                 Ok(Some(manager))
             }
             Err(error) => Err(error),
-        }
-    }
-
-    /// Loads the lists, falling back to backup copies if `lists.json` cannot be used.
-    ///
-    /// Candidates are tried in this order: `lists.json`, `presave_lists.json`, and
-    /// `startup_lists.json`.
-    ///
-    /// - If `lists.json` loads, returns [`LoadOutcome::Loaded`].
-    /// - If a backup loads, it is written back to `lists.json` and
-    ///   [`LoadOutcome::Recovered`] is returned with the path of the backup.
-    /// - If no candidate exists, returns [`LoadOutcome::Missing`].
-    /// - If candidates exist but cannot be parsed, returns the first
-    ///   [`StorageError::Deserialization`] error.
-    ///
-    /// Other errors, such as I/O errors or unsupported format versions, are returned
-    /// immediately without trying the remaining candidates.
-    pub fn load_lists(&self) -> Result<LoadOutcome, StorageError> {
-        let mut first_error: Option<StorageError> = None;
-
-        let candidates = [
-            &self.lists_path,
-            &self.presave_lists_path,
-            &self.startup_lists_path,
-        ];
-
-        for path in candidates {
-            match Self::read_lists_file(path) {
-                Ok(Some(manager)) => {
-                    if path == &self.lists_path {
-                        return Ok(LoadOutcome::Loaded(manager));
-                    }
-
-                    self.write_lists(&manager)?;
-
-                    return Ok(LoadOutcome::Recovered(manager, path.to_path_buf()));
-                }
-                Ok(None) => {}
-                Err(error @ StorageError::Deserialization { .. }) => {
-                    first_error.get_or_insert(error);
-                }
-                Err(other) => {
-                    return Err(other);
-                }
-            }
-        }
-
-        match first_error {
-            None => Ok(LoadOutcome::Missing),
-            Some(first_error) => Err(first_error),
         }
     }
 }
