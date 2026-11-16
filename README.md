@@ -8,7 +8,7 @@ Project is under development. Code from old repository has been rebuilded.
 
 ## Features
 
-### Minimal Viable Product:
+### Minimal Viable Product
 
 - [x] Creating, deleting, and renaming lists
 - [x] Creating, removing, and renaming columns (e.g. backlog, in progress, etc.)
@@ -16,7 +16,8 @@ Project is under development. Code from old repository has been rebuilded.
 - [x] Moving cards between columns
 - [x] Saving and loading lists from JSON file
 - [ ] GUI using Iced
-### Full Release:
+
+### Full Release
 
 - [ ] Importing and exporting lists to and from the user's desktop
 - [ ] Adding, deleting, and renaming card properties (e.g. deadline date, priority, etc.)
