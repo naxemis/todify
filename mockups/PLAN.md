@@ -11,11 +11,11 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
 
 ## TODO
 
-- [ ] Project setup
+- [x] Project setup
   - [x] Scaffold Vite + Vue in `mockups/` (no router, no store, no tests)
   - [x] Confirm `npm run dev` serves the starter page
-  - [ ] Remove starter components and assets
-  - [ ] Confirm `mockups/.gitignore` covers `node_modules/` and `dist/`
+  - [x] Remove starter components and assets
+  - [x] Confirm `mockups/.gitignore` covers `node_modules/` and `dist/`
 - [ ] Design tokens
   - [ ] Spacing scale
   - [ ] Corner radii
