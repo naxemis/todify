@@ -5,7 +5,7 @@ use crate::errors::column_error::ColumnError;
 use crate::models::column::Column;
 
 /// Stores and manages the columns belonging to a single list.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub(crate) struct ColumnManager {
     columns: BTreeMap<u8, Column>,
     next_id: u16,

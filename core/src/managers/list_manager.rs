@@ -5,7 +5,7 @@ use crate::errors::list_error::ListError;
 use crate::models::list::List;
 
 /// Stores and manages the lists in the application.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct ListManager {
     lists: BTreeMap<u16, List>,
     next_id: u32,

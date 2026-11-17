@@ -6,7 +6,7 @@ use crate::managers::card_manager::CardManager;
 use crate::models::card::Card;
 
 /// A column in a to-do list identified by an ID, name, and position.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Column {
     id: u8,
     name: String,
