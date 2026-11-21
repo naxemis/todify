@@ -4,7 +4,7 @@ Simple to-do app built with Rust and Iced. Organize tasks into lists with custom
 
 ## Project Status
 
-Project is under development. Code from old repository has been rebuilded.
+Project is under development. Code from old repository has been rebuilt.
 
 ## Features
 
