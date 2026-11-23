@@ -95,12 +95,12 @@
   --color-border: #262f4a; /* not used by widgets; kept for table separators */
   --color-text: #fafaff;
   --color-text-secondary: #9aa2c2; /* captions, empty states */
-  --color-primary-button: #5c668f;
-  --color-primary-button-hover: #6b76a3;
+  --color-primary-button: #283152;
+  --color-primary-button-hover: #303a5e;
   --color-primary-button-text: #fafaff;
-  /* The secondary button has no background at rest (e.g. Cancel). */
-  --color-secondary-button-hover: #252e4d; /* background on hover only */
-  --color-secondary-button-text: #9aa2c2;
+  /* The secondary button (e.g. Cancel) never has a background; hover only
+     changes the text color. */
+  --color-secondary-button-text: #b2b8d1;
   --color-secondary-button-text-hover: #fafaff;
   --color-danger-button: #3a2440; /* delete */
   --color-danger-button-hover: #462b4d;
