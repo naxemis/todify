@@ -11,10 +11,10 @@
  * Mapping to Rust
  * - Drop "--", replace hyphens with underscores, uppercase everything:
  *   --button-padding-x -> BUTTON_PADDING_X.
- * - Exception, colors: each has a light value (:root) and a dark value
- *   (:root[data-theme="dark"]), so in Rust they are fields of the palette
- *   struct, not constants: --color-row-selected -> field row_selected.
- *   The palette has two constants: LIGHT and DARK.
+ * - Exception, colors: they are still fields of the palette struct, not
+ *   constants: --color-row-selected -> field row_selected. For now the
+ *   palette has a single constant, DARK; the next theme adds a second
+ *   constant without renaming anything.
  *
  * Allowed formats (the only ones Iced can reproduce faithfully)
  * - Lengths: px only.
@@ -83,47 +83,26 @@
   --font-size-dialog-title: 16px;
   --font-size-screen-title: 20px;
 
-  /* Colors: the light theme, which is the default. The dark theme
-     overrides these same names. */
-  --color-window: #f7f7f8; /* window background */
-  --color-panel: #ffffff; /* table, dialog, toast */
-  --color-sidebar: #efeff1; /* sidebar, table header */
-  --color-row-hover: #e6e6ea;
-  --color-row-selected: #d6dae8; /* selected list */
-  --color-border: #dcdce0;
-  --color-text: #1c1c21;
-  --color-text-secondary: #6b6b76; /* captions, empty states */
-  --color-primary-button: #4a4a52;
-  --color-primary-button-hover: #36363c;
-  --color-primary-button-text: #ffffff;
-  --color-danger-button: #b14242; /* delete, errors */
-  --color-danger-button-hover: #923232;
-  --color-danger-button-text: #ffffff;
-  --color-warning-text: #a1561c;
-  --color-warning-background: #fcf4e8; /* warning toast */
-  --color-backdrop: rgba(0, 0, 0, 0.4); /* dims the screen under a dialog */
-  --color-shadow: rgba(0, 0, 0, 0.15); /* dialog and toast shadow */
-}
-
-/* Dark theme: enabled by data-theme="dark" on <html>. Overrides colors
-   only; spacing, radius and font do not depend on the theme. */
-:root[data-theme="dark"] {
-  --color-window: #18181b;
-  --color-panel: #212126;
-  --color-sidebar: #2a2a30;
-  --color-row-hover: #33333a;
-  --color-row-selected: #40445a;
-  --color-border: #3a3a42;
-  --color-text: #ececf0;
-  --color-text-secondary: #9a9aa6;
-  --color-primary-button: #c4c4cc;
-  --color-primary-button-hover: #d6d6dc;
-  --color-primary-button-text: #1c1c21;
-  --color-danger-button: #e86464;
-  --color-danger-button-hover: #f07a7a;
-  --color-danger-button-text: #1c1c21;
-  --color-warning-text: #eb9c5d;
-  --color-warning-background: #32281f;
-  --color-backdrop: rgba(0, 0, 0, 0.6);
-  --color-shadow: rgba(0, 0, 0, 0.5);
+  /* Colors: a single dark theme for now. A light theme may be added later
+     under these same names. */
+  --color-window: #121829;
+  --color-panel: #1c2440; /* dialog, toast, table */
+  --color-sidebar: #0e1322;
+  --color-row-hover: #1a2135;
+  --color-row-selected: #222b45; /* selected list */
+  --color-border: #262f4a; /* not used by widgets; kept for table separators */
+  --color-text: #fafaff;
+  --color-text-secondary: #9aa2c2; /* captions, empty states */
+  --color-primary-button: #5c668f;
+  --color-primary-button-hover: #6b76a3;
+  --color-primary-button-text: #fafaff;
+  --color-secondary-button: #283152; /* e.g. Cancel */
+  --color-secondary-button-hover: #303a5e;
+  --color-secondary-button-text: #fafaff;
+  --color-danger-button: #3a2440; /* delete */
+  --color-danger-button-hover: #462b4d;
+  --color-danger-button-text: #f08fa0;
+  --color-warning-icon: #e8cf96; /* warning icon in the toast */
+  --color-backdrop: rgba(0, 0, 0, 0.5); /* dims the screen under a dialog */
+  --color-shadow: rgba(0, 0, 0, 0.4); /* dialog and toast shadow */
 }

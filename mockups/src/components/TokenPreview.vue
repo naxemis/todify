@@ -14,45 +14,32 @@ const COLOR_TOKENS = [
   "--color-primary-button",
   "--color-primary-button-hover",
   "--color-primary-button-text",
+  "--color-secondary-button",
+  "--color-secondary-button-hover",
+  "--color-secondary-button-text",
   "--color-danger-button",
   "--color-danger-button-hover",
   "--color-danger-button-text",
-  "--color-warning-text",
-  "--color-warning-background",
+  "--color-warning-icon",
   "--color-backdrop",
   "--color-shadow",
 ];
 
-const isDark = ref(false);
 const values = ref({});
 
-// Reads the current value of every color token from <html>.
-function readValues() {
+// Reads the value of every color token from <html>, once, on mount.
+onMounted(() => {
   const style = getComputedStyle(document.documentElement);
   const next = {};
   for (const name of COLOR_TOKENS) {
     next[name] = style.getPropertyValue(name).trim();
   }
   values.value = next;
-}
-
-function toggleTheme() {
-  isDark.value = !isDark.value;
-  if (isDark.value) {
-    document.documentElement.setAttribute("data-theme", "dark");
-  } else {
-    document.documentElement.removeAttribute("data-theme");
-  }
-  readValues();
-}
-
-onMounted(readValues);
+});
 </script>
 
 <template>
   <div class="page">
-    <button class="button primary" @click="toggleTheme">Light / Dark</button>
-
     <section class="section">
       <h2 class="heading">Colors</h2>
       <div class="swatch-list">
@@ -90,7 +77,7 @@ onMounted(readValues);
           <div class="dialog-title-text">Delete list?</div>
           <div>This action cannot be undone.</div>
           <div class="buttons">
-            <button class="button primary">Cancel</button>
+            <button class="button secondary-button">Cancel</button>
             <button class="button danger">Delete</button>
           </div>
         </div>
@@ -210,6 +197,15 @@ onMounted(readValues);
   background: var(--color-primary-button-hover);
 }
 
+.secondary-button {
+  background: var(--color-secondary-button);
+  color: var(--color-secondary-button-text);
+}
+
+.secondary-button:hover {
+  background: var(--color-secondary-button-hover);
+}
+
 .danger {
   background: var(--color-danger-button);
   color: var(--color-danger-button-text);
@@ -264,8 +260,8 @@ onMounted(readValues);
 .toast {
   width: var(--toast-width);
   padding: var(--toast-padding);
-  background: var(--color-warning-background);
-  color: var(--color-warning-text);
+  background: var(--color-panel);
+  color: var(--color-text);
   border-radius: var(--toast-radius);
   box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur)
     var(--color-shadow);
