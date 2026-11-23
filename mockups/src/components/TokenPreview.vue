@@ -82,7 +82,6 @@ onMounted(() => {
         </div>
 
         <div class="toast">
-          <span class="toast-icon" aria-hidden="true"></span>
           <span>Could not save changes.</span>
         </div>
       </div>
@@ -273,18 +272,5 @@ onMounted(() => {
   border-radius: var(--toast-radius);
   box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur)
     var(--color-shadow);
-}
-
-/* The SVG only provides the shape; background-color provides the color,
-   like Iced tints an svg widget with the color from its style. */
-.toast-icon {
-  flex-shrink: 0;
-  width: var(--toast-icon-size);
-  height: var(--toast-icon-size);
-  background-color: var(--color-warning-icon);
-  mask-image: url("/icons/alert-triangle.svg");
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
 }
 </style>
