@@ -42,4 +42,19 @@
   --toast-offset: 16px; /* distance from the window edge */
   --frame-width: 640px; /* must match window_size in gui/src/main.rs */
   --frame-height: 480px;
+
+  /* Corner radius (theme-independent) */
+  --button-radius: 6px;
+  --row-radius: 4px; /* sidebar and table rows */
+  --dialog-radius: 10px;
+  --toast-radius: 10px;
+
+  /* Border and shadow (theme-independent).
+     The shadow is split into numbers because Iced describes it with
+     color, offset and blur_radius fields, not one box-shadow string.
+     There is no horizontal offset (always 0); the shadow color is
+     added with the color palette. */
+  --border-width: 1px;
+  --overlay-shadow-offset-y: 4px; /* dialog and toast */
+  --overlay-shadow-blur: 16px;
 }
