@@ -6,6 +6,8 @@
 
 body {
   margin: 0;
+  background: var(--color-window);
+  color: var(--color-text);
   font-family: var(--font-family);
   font-size: var(--font-size-normal);
   font-weight: var(--font-weight-normal);

@@ -82,4 +82,25 @@
   --font-size-normal: 14px; /* all regular text */
   --font-size-dialog-title: 16px;
   --font-size-screen-title: 20px;
+
+  /* Colors: the light theme, which is the default. The dark theme
+     overrides these same names. */
+  --color-window: #f7f7f8; /* window background */
+  --color-panel: #ffffff; /* table, dialog, toast */
+  --color-sidebar: #efeff1; /* sidebar, table header */
+  --color-row-hover: #e6e6ea;
+  --color-row-selected: #e3e8fc; /* selected list */
+  --color-border: #dcdce0;
+  --color-text: #1c1c21;
+  --color-text-secondary: #6b6b76; /* captions, empty states */
+  --color-primary-button: #3b5bdb;
+  --color-primary-button-hover: #3049b8;
+  --color-primary-button-text: #ffffff;
+  --color-danger-button: #c92a2a; /* delete, errors */
+  --color-danger-button-hover: #a61e1e;
+  --color-danger-button-text: #ffffff;
+  --color-warning-text: #b45309;
+  --color-warning-background: #fff4e5; /* warning toast */
+  --color-backdrop: rgba(0, 0, 0, 0.4); /* dims the screen under a dialog */
+  --color-shadow: rgba(0, 0, 0, 0.15); /* dialog and toast shadow */
 }
