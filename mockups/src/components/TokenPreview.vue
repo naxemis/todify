@@ -14,9 +14,9 @@ const COLOR_TOKENS = [
   "--color-primary-button",
   "--color-primary-button-hover",
   "--color-primary-button-text",
-  "--color-secondary-button",
   "--color-secondary-button-hover",
   "--color-secondary-button-text",
+  "--color-secondary-button-text-hover",
   "--color-danger-button",
   "--color-danger-button-hover",
   "--color-danger-button-text",
@@ -200,13 +200,15 @@ onMounted(() => {
   background: var(--color-primary-button-hover);
 }
 
+/* No background at rest: "transparent" is Iced's background None. */
 .secondary-button {
-  background: var(--color-secondary-button);
+  background: transparent;
   color: var(--color-secondary-button-text);
 }
 
 .secondary-button:hover {
   background: var(--color-secondary-button-hover);
+  color: var(--color-secondary-button-text-hover);
 }
 
 .danger {

@@ -98,9 +98,10 @@
   --color-primary-button: #5c668f;
   --color-primary-button-hover: #6b76a3;
   --color-primary-button-text: #fafaff;
-  --color-secondary-button: #283152; /* e.g. Cancel */
-  --color-secondary-button-hover: #303a5e;
-  --color-secondary-button-text: #fafaff;
+  /* The secondary button has no background at rest (e.g. Cancel). */
+  --color-secondary-button-hover: #252e4d; /* background on hover only */
+  --color-secondary-button-text: #9aa2c2;
+  --color-secondary-button-text-hover: #fafaff;
   --color-danger-button: #3a2440; /* delete */
   --color-danger-button-hover: #462b4d;
   --color-danger-button-text: #f08fa0;
