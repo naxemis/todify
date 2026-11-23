@@ -1,3 +1,6 @@
+// Copyright (c) 2026 naxemis
+// AGPL 3.0
+
 use std::fmt;
 use std::path::PathBuf;
 

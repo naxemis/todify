@@ -1,3 +1,6 @@
+// Copyright (c) 2026 naxemis
+// AGPL 3.0
+
 use serde::{Deserialize, Serialize};
 
 use crate::errors::card_error::CardError;
