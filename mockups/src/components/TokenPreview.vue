@@ -82,7 +82,10 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="toast">Could not save changes.</div>
+        <div class="toast">
+          <span class="toast-icon" aria-hidden="true"></span>
+          <span>Could not save changes.</span>
+        </div>
       </div>
     </section>
   </div>
@@ -258,6 +261,10 @@ onMounted(() => {
 }
 
 .toast {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--toast-icon-gap);
   width: var(--toast-width);
   padding: var(--toast-padding);
   background: var(--color-panel);
@@ -265,5 +272,18 @@ onMounted(() => {
   border-radius: var(--toast-radius);
   box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur)
     var(--color-shadow);
+}
+
+/* The SVG only provides the shape; background-color provides the color,
+   like Iced tints an svg widget with the color from its style. */
+.toast-icon {
+  flex-shrink: 0;
+  width: var(--toast-icon-size);
+  height: var(--toast-icon-size);
+  background-color: var(--color-warning-icon);
+  mask-image: url("/icons/alert-triangle.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
 }
 </style>

@@ -53,6 +53,8 @@
   --toast-width: 280px;
   --toast-padding: 12px;
   --toast-offset: 16px; /* distance from the window edge */
+  --toast-icon-size: 16px;
+  --toast-icon-gap: 8px; /* between the icon and the text */
   --frame-width: 640px; /* must match window_size in gui/src/main.rs */
   --frame-height: 480px;
 
