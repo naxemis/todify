@@ -23,4 +23,23 @@
  */
 
 :root {
+  /* Spacing and sizes (theme-independent) */
+  --window-padding: 16px; /* content inset from the window edge */
+  --sidebar-width: 180px;
+  --sidebar-padding: 8px; /* inside the sidebar */
+  --sidebar-item-gap: 4px; /* between lists in the sidebar */
+  --row-padding-x: 12px; /* sidebar and table rows */
+  --row-padding-y: 8px;
+  --row-height: 32px;
+  --button-padding-x: 12px;
+  --button-padding-y: 6px;
+  --button-gap: 8px; /* between buttons in a row */
+  --dialog-width: 360px;
+  --dialog-padding: 16px; /* inside the dialog */
+  --dialog-gap: 12px; /* between title, body and button row */
+  --toast-width: 280px;
+  --toast-padding: 12px;
+  --toast-offset: 16px; /* distance from the window edge */
+  --frame-width: 640px; /* must match window_size in gui/src/main.rs */
+  --frame-height: 480px;
 }
