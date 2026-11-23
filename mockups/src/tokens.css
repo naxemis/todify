@@ -89,7 +89,7 @@
   --color-panel: #ffffff; /* table, dialog, toast */
   --color-sidebar: #efeff1; /* sidebar, table header */
   --color-row-hover: #e6e6ea;
-  --color-row-selected: #e6eaf9; /* selected list */
+  --color-row-selected: #d6dae8; /* selected list */
   --color-border: #dcdce0;
   --color-text: #1c1c21;
   --color-text-secondary: #6b6b76; /* captions, empty states */
@@ -112,7 +112,7 @@
   --color-panel: #212126;
   --color-sidebar: #2a2a30;
   --color-row-hover: #33333a;
-  --color-row-selected: #373a45;
+  --color-row-selected: #40445a;
   --color-border: #3a3a42;
   --color-text: #ececf0;
   --color-text-secondary: #9a9aa6;
