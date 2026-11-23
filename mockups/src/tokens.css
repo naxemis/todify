@@ -104,3 +104,26 @@
   --color-backdrop: rgba(0, 0, 0, 0.4); /* dims the screen under a dialog */
   --color-shadow: rgba(0, 0, 0, 0.15); /* dialog and toast shadow */
 }
+
+/* Dark theme: enabled by data-theme="dark" on <html>. Overrides colors
+   only; spacing, radius and font do not depend on the theme. */
+:root[data-theme="dark"] {
+  --color-window: #18181b;
+  --color-panel: #212126;
+  --color-sidebar: #2a2a30;
+  --color-row-hover: #33333a;
+  --color-row-selected: #2b3352;
+  --color-border: #3a3a42;
+  --color-text: #ececf0;
+  --color-text-secondary: #9a9aa6;
+  --color-primary-button: #5c7cfa;
+  --color-primary-button-hover: #748ffc;
+  --color-primary-button-text: #ffffff;
+  --color-danger-button: #fa5252;
+  --color-danger-button-hover: #ff6b6b;
+  --color-danger-button-text: #1c1c21;
+  --color-warning-text: #fd9a4b;
+  --color-warning-background: #3a2a17;
+  --color-backdrop: rgba(0, 0, 0, 0.6);
+  --color-shadow: rgba(0, 0, 0, 0.5);
+}
