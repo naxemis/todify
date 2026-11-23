@@ -1,3 +1,6 @@
+// Copyright (c) 2026 naxemis
+// AGPL 3.0
+
 // Before this block: finish building design mockups (branch feat/vue-design-mockups)
 // todo(screens/welcome): Add the welcome screen state, messages and view.
 // todo(screens/home): Add list selection and create/rename/delete of lists.

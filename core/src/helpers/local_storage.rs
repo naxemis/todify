@@ -1,3 +1,6 @@
+// Copyright (c) 2026 naxemis
+// AGPL 3.0
+
 use crate::errors::storage_error::StorageError;
 use crate::helpers::load_outcome::LoadOutcome;
 use crate::managers::list_manager::ListManager;
