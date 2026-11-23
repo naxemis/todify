@@ -66,8 +66,8 @@ onMounted(readValues);
 
     <section class="section">
       <h2 class="heading">Text sizes</h2>
-      <div class="text-sample small">--font-size-small: The quick brown fox</div>
-      <div class="text-sample normal">--font-size-normal: The quick brown fox</div>
+      <div class="text-sample caption">--font-size-caption: The quick brown fox</div>
+      <div class="text-sample body">--font-size-body: The quick brown fox</div>
       <div class="text-sample dialog-title">--font-size-dialog-title: The quick brown fox</div>
       <div class="text-sample screen-title">--font-size-screen-title: The quick brown fox</div>
     </section>
@@ -119,7 +119,7 @@ onMounted(readValues);
 .heading {
   margin: 0;
   font-size: var(--font-size-dialog-title);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
 }
 
 .secondary {
@@ -148,22 +148,22 @@ onMounted(readValues);
 }
 
 /* Text sizes */
-.small {
-  font-size: var(--font-size-small);
+.caption {
+  font-size: var(--font-size-caption);
 }
 
-.normal {
-  font-size: var(--font-size-normal);
+.body {
+  font-size: var(--font-size-body);
 }
 
 .dialog-title {
   font-size: var(--font-size-dialog-title);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
 }
 
 .screen-title {
   font-size: var(--font-size-screen-title);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Window frame */
@@ -176,7 +176,8 @@ onMounted(readValues);
   height: var(--frame-height);
   padding: var(--window-padding);
   background: var(--color-window);
-  border: var(--border-width) solid var(--color-border);
+  /* Outline takes no layout space, so the inside stays exactly 640x480. */
+  outline: var(--border-width) solid var(--color-border);
   overflow: auto;
 }
 
@@ -195,7 +196,7 @@ onMounted(readValues);
   border: none;
   border-radius: var(--button-radius);
   font-family: inherit;
-  font-size: var(--font-size-normal);
+  font-size: var(--font-size-body);
   line-height: var(--line-height);
   cursor: pointer;
 }
@@ -231,7 +232,7 @@ onMounted(readValues);
   display: flex;
   align-items: center;
   height: var(--row-height);
-  padding: var(--row-padding-y) var(--row-padding-x);
+  padding: 0 var(--row-padding-x);
   border-radius: var(--row-radius);
 }
 
@@ -257,7 +258,7 @@ onMounted(readValues);
 
 .dialog-title-text {
   font-size: var(--font-size-dialog-title);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
 }
 
 .toast {
