@@ -1,0 +1,26 @@
+/*
+ * Design tokens: every appearance value of the mockups lives here.
+ * Components contain no literals; they only reference these variables.
+ * The mockups are the visual reference for the Iced GUI (gui/).
+ *
+ * Naming
+ * - A token name says what it applies to, e.g. --button-padding-x,
+ *   --dialog-radius, --color-row-selected.
+ * - No abstract scales such as space-3 or radius-md.
+ *
+ * Mapping to Rust
+ * - Drop "--", replace hyphens with underscores, uppercase everything:
+ *   --button-padding-x -> BUTTON_PADDING_X.
+ * - Exception, colors: each has a light value (:root) and a dark value
+ *   (:root[data-theme="dark"]), so in Rust they are fields of the palette
+ *   struct, not constants: --color-row-selected -> field row_selected.
+ *   The palette has two constants: LIGHT and DARK.
+ *
+ * Allowed formats (the only ones Iced can reproduce faithfully)
+ * - Lengths: px only.
+ * - Colors: #rrggbb or rgba(r, g, b, a).
+ * - Line height: a unitless number.
+ */
+
+:root {
+}

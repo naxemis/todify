@@ -17,8 +17,8 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Remove starter components and assets
   - [x] Confirm `mockups/.gitignore` covers `node_modules/` and `dist/`
 - [ ] Design tokens
-  - [ ] Spacing scale
-  - [ ] Corner radii
+  - [ ] Spacing scales
+  - [ ] Corner radius
   - [ ] Text sizes and font family
   - [ ] Light color set
   - [ ] Dark color set, switched by an attribute on the root element
