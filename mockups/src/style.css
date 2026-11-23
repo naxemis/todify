@@ -6,4 +6,8 @@
 
 body {
   margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height);
 }
