@@ -89,18 +89,18 @@
   --color-panel: #ffffff; /* table, dialog, toast */
   --color-sidebar: #efeff1; /* sidebar, table header */
   --color-row-hover: #e6e6ea;
-  --color-row-selected: #e3e8fc; /* selected list */
+  --color-row-selected: #e6eaf9; /* selected list */
   --color-border: #dcdce0;
   --color-text: #1c1c21;
   --color-text-secondary: #6b6b76; /* captions, empty states */
-  --color-primary-button: #3b5bdb;
-  --color-primary-button-hover: #3049b8;
+  --color-primary-button: #4a4a52;
+  --color-primary-button-hover: #36363c;
   --color-primary-button-text: #ffffff;
-  --color-danger-button: #c92a2a; /* delete, errors */
-  --color-danger-button-hover: #a61e1e;
+  --color-danger-button: #b14242; /* delete, errors */
+  --color-danger-button-hover: #923232;
   --color-danger-button-text: #ffffff;
-  --color-warning-text: #b45309;
-  --color-warning-background: #fff4e5; /* warning toast */
+  --color-warning-text: #a1561c;
+  --color-warning-background: #fcf4e8; /* warning toast */
   --color-backdrop: rgba(0, 0, 0, 0.4); /* dims the screen under a dialog */
   --color-shadow: rgba(0, 0, 0, 0.15); /* dialog and toast shadow */
 }
@@ -112,18 +112,18 @@
   --color-panel: #212126;
   --color-sidebar: #2a2a30;
   --color-row-hover: #33333a;
-  --color-row-selected: #2b3352;
+  --color-row-selected: #373a45;
   --color-border: #3a3a42;
   --color-text: #ececf0;
   --color-text-secondary: #9a9aa6;
-  --color-primary-button: #5c7cfa;
-  --color-primary-button-hover: #748ffc;
-  --color-primary-button-text: #ffffff;
-  --color-danger-button: #fa5252;
-  --color-danger-button-hover: #ff6b6b;
+  --color-primary-button: #c4c4cc;
+  --color-primary-button-hover: #d6d6dc;
+  --color-primary-button-text: #1c1c21;
+  --color-danger-button: #e86464;
+  --color-danger-button-hover: #f07a7a;
   --color-danger-button-text: #1c1c21;
-  --color-warning-text: #fd9a4b;
-  --color-warning-background: #3a2a17;
+  --color-warning-text: #eb9c5d;
+  --color-warning-background: #32281f;
   --color-backdrop: rgba(0, 0, 0, 0.6);
   --color-shadow: rgba(0, 0, 0, 0.5);
 }
