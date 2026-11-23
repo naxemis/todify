@@ -16,13 +16,12 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Confirm `npm run dev` serves the starter page
   - [x] Remove starter components and assets
   - [x] Confirm `mockups/.gitignore` covers `node_modules/` and `dist/`
-- [ ] Design tokens
-  - [ ] Spacing scale
-  - [ ] Corner radii
-  - [ ] Text sizes and font family
-  - [ ] Light color set
-  - [ ] Dark color set, switched by an attribute on the root element
-  - [ ] Name every token so it maps one-to-one to a Rust constant
+- [x] Design tokens
+  - [x] Spacing scales
+  - [x] Corner radius
+  - [x] Text sizes and font family
+  - [x] Color set (a single dark theme for now)
+  - [x] Name every token so it maps one-to-one to a Rust constant
 - [ ] Fixtures
   - [ ] Fake lists and items shaped like the `core` model
   - [ ] Edge cases: no lists, empty list, very long name, enough items to scroll

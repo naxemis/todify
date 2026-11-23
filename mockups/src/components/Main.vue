@@ -1,7 +1,7 @@
 <script setup>
-
+import TokenPreview from "./TokenPreview.vue";
 </script>
 
 <template>
-  Empty page placeholder
+  <TokenPreview />
 </template>
