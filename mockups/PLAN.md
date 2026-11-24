@@ -33,7 +33,7 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Dialog frame: title, body slot, button row; emits only the chosen button
   - [x] Confirm dialog built on the dialog frame
   - [x] Error dialog with caller-given buttons
-  - [ ] Toast
+  - [x] Toast
 - [ ] Screens
   - [ ] Welcome
   - [ ] Home

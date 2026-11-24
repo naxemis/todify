@@ -13,6 +13,7 @@
 import Dialog from '../overlays/Dialog.vue';
 import ConfirmDialog from '../overlays/ConfirmDialog.vue';
 import ErrorDialog from '../overlays/ErrorDialog.vue';
+import Toast from '../overlays/Toast.vue';
 import { typicalLists, longNames } from '../fixtures/index.js';
 
 const dialogCases = [
@@ -116,6 +117,18 @@ const errorCases = [
   },
 ];
 
+const toastCases = [
+  {
+    label: 'short',
+    message: 'Lists were recovered from a backup.',
+  },
+  {
+    label: 'long',
+    message:
+      'Lists were recovered from a backup. The damaged file was kept as /home/user/.local/share/todify/lists.corrupt-2026-11-24T10-15-00.json',
+  },
+];
+
 function onChoose(id) {
   console.log(`choose ${id}`);
 }
@@ -178,13 +191,12 @@ function onChoose(id) {
 
     <section class="section">
       <h2 class="heading">Toast</h2>
-      <div class="case">
-        <span class="caption">placeholder</span>
+      <div v-for="item in toastCases" :key="item.label" class="case">
+        <span class="caption">{{ item.label }}</span>
         <div class="slot">
           <div class="screen">Screen</div>
           <div class="layer layer-toast">
-            <!-- Placeholder: a later step replaces it with the real toast component. -->
-            <span class="placeholder">Toast goes here</span>
+            <Toast :message="item.message" />
           </div>
         </div>
       </div>
@@ -261,10 +273,5 @@ function onChoose(id) {
   align-items: flex-end;
   justify-content: flex-end;
   padding: var(--toast-offset);
-}
-
-.placeholder {
-  font-size: var(--font-size-body);
-  color: var(--color-text);
 }
 </style>
