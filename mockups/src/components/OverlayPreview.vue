@@ -9,17 +9,63 @@
   has no flex equivalent.
 -->
 
+<script setup>
+import Dialog from '../overlays/Dialog.vue';
+
+const dialogCases = [
+  {
+    label: 'one button',
+    title: 'Saved',
+    body: 'Your changes were saved.',
+    buttons: [{ id: 'ok', label: 'OK', variant: 'primary' }],
+  },
+  {
+    label: 'three buttons',
+    title: 'Unsaved changes',
+    body: 'Do you want to save your changes before closing?',
+    buttons: [
+      { id: 'cancel', label: 'Cancel', variant: 'secondary' },
+      { id: 'discard', label: 'Discard', variant: 'danger' },
+      { id: 'save', label: 'Save', variant: 'primary' },
+    ],
+  },
+  {
+    label: 'long title',
+    title: 'Supercalifragilisticexpialidocious_Supercalifragilisticexpialidocious_Supercalifragilisticexpialidocious',
+    body: 'The title has a very long word without spaces.',
+    buttons: [
+      { id: 'cancel', label: 'Cancel', variant: 'secondary' },
+      { id: 'ok', label: 'OK', variant: 'primary' },
+    ],
+  },
+  {
+    label: 'long body',
+    title: 'Could not load the list',
+    body: 'The file with your lists could not be read. It may be damaged or it may have been created by a newer version of the app. You can open it in read-only mode, keep working with an empty list, or try to load it again. Nothing is deleted until you save.',
+    buttons: [
+      { id: 'cancel', label: 'Cancel', variant: 'secondary' },
+      { id: 'retry', label: 'Retry', variant: 'primary' },
+    ],
+  },
+];
+
+function onChoose(id) {
+  console.log(`choose ${id}`);
+}
+</script>
+
 <template>
   <div class="page">
     <section class="section">
       <h2 class="heading">Dialog</h2>
-      <div class="case">
-        <span class="caption">placeholder</span>
+      <div v-for="item in dialogCases" :key="item.label" class="case">
+        <span class="caption">{{ item.label }}</span>
         <div class="slot">
           <div class="screen">Screen</div>
           <div class="layer layer-dialog">
-            <!-- Placeholder: a later step replaces it with the real dialog component. -->
-            <span class="placeholder">Dialog goes here</span>
+            <Dialog :title="item.title" :buttons="item.buttons" @choose="onChoose">
+              {{ item.body }}
+            </Dialog>
           </div>
         </div>
       </div>
