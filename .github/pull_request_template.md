@@ -9,6 +9,7 @@ If this section is N/A for the PR, remove it.
 -->
 
 ## Description
+
 [Briefly describe what exactly this Pull Request changes and how it accomplishes the task]
 
 ## How to test it?
@@ -31,6 +32,7 @@ instead of removing it.
 
 This helps reviewers see the testing phase was intentionally skipped.
 -->
+
 - [ ] The Pull Request title is clear, understandable, and consistent with project conventions (e.g., feat/fix)
 - [ ] The code complies with project standards and is formatted correctly
 - [ ] Unit/integration tests have been written or updated for the code
