@@ -8,6 +8,9 @@
 -->
 
 <script setup>
+import SidebarLayout from '../screens/SidebarLayout.vue';
+import { typicalLists } from '../fixtures/index.js';
+
 /**
  * One group per screen.
  *
@@ -15,6 +18,8 @@
  * @property {string} label - caption shown above the frame
  * @property {import('vue').Component} component - the screen to render
  * @property {Object} props - props passed to the screen
+ * @property {Object<string, Function>} [events] - emit name to handler, bound with v-on
+ * @property {string} [slotText] - when set, rendered as placeholder content in the default slot
  *
  * @typedef {Object} ScreenGroup
  * @property {string} heading - the screen name, for example "Home"
@@ -22,7 +27,25 @@
  *
  * @type {ScreenGroup[]}
  */
-const groups = [];
+const groups = [
+  {
+    heading: 'Sidebar layout',
+    cases: [
+      {
+        label: 'typicalLists, first selected',
+        component: SidebarLayout,
+        props: { lists: typicalLists, selectedId: typicalLists[0].id },
+        slotText: 'Screen content',
+        events: {
+          select: (id) => onEvent('select', id),
+          delete: (id) => onEvent('delete', id),
+          home: () => onEvent('home'),
+          settings: () => onEvent('settings'),
+        },
+      },
+    ],
+  },
+];
 
 function onEvent(name, payload) {
   console.log(name, payload);
@@ -39,7 +62,9 @@ function onEvent(name, payload) {
         <div v-for="item in group.cases" :key="item.label" class="case">
           <span class="caption">{{ item.label }}</span>
           <div class="slot">
-            <component :is="item.component" v-bind="item.props" />
+            <component :is="item.component" v-bind="item.props" v-on="item.events ?? {}">
+              <div v-if="item.slotText" class="placeholder">{{ item.slotText }}</div>
+            </component>
           </div>
         </div>
       </section>
@@ -75,6 +100,13 @@ function onEvent(name, payload) {
 }
 
 .caption {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+}
+
+/* Stand-in for a screen's content in the default slot. */
+.placeholder {
+  padding: var(--window-padding);
   font-size: var(--font-size-caption);
   color: var(--color-text-secondary);
 }
