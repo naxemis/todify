@@ -24,7 +24,7 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Name every token so it maps one-to-one to a Rust constant
 - [ ] Fixtures
   - [x] Fake lists and items shaped like the `core` model
-  - [ ] Edge cases: no lists, empty list, very long name, enough items to scroll
+  - [x] Edge cases: no lists, empty list, very long name, enough items to scroll
 - [ ] Widgets
   - [ ] Sidebar: lists, selected list, select and delete events
   - [ ] Table: items of the selected list, stateless
