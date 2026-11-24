@@ -3,11 +3,30 @@
   from section 7 of mockups/PLAN.md will replace it.
 -->
 
+<script setup>
+import { typicalLists } from '../fixtures/index.js';
+import Sidebar from '../widgets/Sidebar.vue';
+
+const firstListId = typicalLists[0].id;
+
+/** @param {number} id */
+function onSelect(id) {
+  console.log('select', id);
+}
+</script>
+
 <template>
   <div class="page">
     <section class="section">
       <h2 class="heading">Sidebar</h2>
-      <div class="slot sidebar-slot"></div>
+      <div class="sidebar-row">
+        <div class="slot sidebar-slot">
+          <Sidebar :lists="typicalLists" :selected-id="null" @select="onSelect" />
+        </div>
+        <div class="slot sidebar-slot">
+          <Sidebar :lists="typicalLists" :selected-id="firstListId" @select="onSelect" />
+        </div>
+      </div>
     </section>
 
     <section class="section">
@@ -36,6 +55,12 @@
   margin: 0;
   font-size: var(--font-size-dialog-title);
   font-weight: var(--font-weight-semibold);
+}
+
+.sidebar-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--button-gap);
 }
 
 /* Empty place for a widget. Scrolling is the widget's job, so overflow is hidden. */
