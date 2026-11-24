@@ -120,17 +120,28 @@ const errorCases = [
 const toastCases = [
   {
     label: 'short',
+    title: 'Lists recovered',
     message: 'Lists were recovered from a backup.',
   },
   {
-    label: 'long',
+    label: 'long message',
+    title: 'Lists recovered',
     message:
       'Lists were recovered from a backup. The damaged file was kept as /home/user/.local/share/todify/lists.corrupt-2026-11-24T10-15-00.json',
+  },
+  {
+    label: 'long title',
+    title: 'Could not save the startup snapshot of your lists',
+    message: 'Todify will keep working, but there is no copy of the lists from before this session.',
   },
 ];
 
 function onChoose(id) {
   console.log(`choose ${id}`);
+}
+
+function onDismiss() {
+  console.log('dismiss');
 }
 </script>
 
@@ -196,7 +207,7 @@ function onChoose(id) {
         <div class="slot">
           <div class="screen">Screen</div>
           <div class="layer layer-toast">
-            <Toast :message="item.message" />
+            <Toast :title="item.title" :message="item.message" @dismiss="onDismiss" />
           </div>
         </div>
       </div>

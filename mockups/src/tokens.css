@@ -57,11 +57,11 @@
   --dialog-width: 360px;
   --dialog-padding: 16px; /* inside the dialog */
   --dialog-gap: 12px; /* between title, body and button row */
-  --toast-width: 280px;
+  --toast-min-width: 180px; /* the toast grows with its content, between min and max */
+  --toast-max-width: 360px;
   --toast-padding: 12px;
   --toast-offset: 16px; /* distance from the window edge */
-  --toast-icon-size: 16px;
-  --toast-icon-gap: 8px; /* between the icon and the text */
+  --toast-gap: 4px; /* between the title row and the message */
   --frame-width: 640px; /* must match window_size in gui/src/main.rs */
   --frame-height: 480px;
 
@@ -115,7 +115,7 @@
   --color-danger-button: #3a2440; /* delete */
   --color-danger-button-hover: #462b4d;
   --color-danger-button-text: #f08fa0;
-  --color-warning-icon: #e8cf96; /* warning icon in the toast */
+  --color-toast-title: #e8cf96; /* warning title in the toast */
   --color-backdrop: rgba(0, 0, 0, 0.5); /* dims the screen under a dialog */
   --color-shadow: rgba(0, 0, 0, 0.4); /* dialog and toast shadow */
 }
