@@ -41,6 +41,14 @@ function onSelect(id) {
 function onDelete(id) {
   console.log('delete', id);
 }
+
+function onHome() {
+  console.log('home');
+}
+
+function onSettings() {
+  console.log('settings');
+}
 </script>
 
 <template>
@@ -51,7 +59,14 @@ function onDelete(id) {
         <div v-for="item in sidebarCases" :key="item.label" class="case">
           <span class="caption">{{ item.label }}</span>
           <div class="slot sidebar-slot">
-            <Sidebar :lists="item.lists" :selected-id="item.selectedId" @select="onSelect" @delete="onDelete" />
+            <Sidebar
+              :lists="item.lists"
+              :selected-id="item.selectedId"
+              @select="onSelect"
+              @delete="onDelete"
+              @home="onHome"
+              @settings="onSettings"
+            />
           </div>
         </div>
       </div>

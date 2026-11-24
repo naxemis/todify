@@ -1,11 +1,19 @@
 <!--
-  Sidebar widget: the lists of the app, one row per list.
+  Sidebar widget: a "Home" button, the lists of the app (one row per list)
+  and a "Settings" button. From the top: "Home", a separator, the lists, a
+  separator, "Settings". The separators are `rule::horizontal` in Iced.
   Receives `lists` (all lists, in display order) and `selectedId` (id of the
   selected list, or null). Holds no state of its own. Emits `select` with the
   id of the clicked list; the parent decides what is selected. Emits `delete`
   with the id of the list whose "×" button was clicked (without `select`); the
-  widget deletes nothing itself, the parent decides.
-  Edge cases: no lists shows a single non-interactive "No lists yet" row, names stay on one line and are clipped without an ellipsis (the "×" is always visible), and rows keep their full height while the inside of the sidebar scrolls.
+  widget deletes nothing itself, the parent decides. Emits `home` and
+  `settings`, both without a parameter, when the matching button is clicked.
+  Only the area of the lists scrolls; the buttons and separators stay in
+  place, and "Settings" is always at the very bottom.
+  Edge cases: no lists shows a single non-interactive "No lists yet" row,
+  names stay on one line and are clipped without an ellipsis (the "×" is
+  always visible), and rows keep their full height while the lists area
+  scrolls.
   Counterpart in the GUI: gui/src/widgets/sidebar.rs.
 -->
 
@@ -17,24 +25,30 @@ defineProps({
   selectedId: { type: Number, default: null },
 });
 
-const emit = defineEmits(['select', 'delete']);
+const emit = defineEmits(['select', 'delete', 'home', 'settings']);
 </script>
 
 <template>
   <div class="sidebar">
-    <div v-if="lists.length === 0" class="empty">No lists yet</div>
-    <template v-else>
-      <div
-        v-for="list in lists"
-        :key="list.id"
-        class="row"
-        :class="{ selected: list.id === selectedId }"
-        @click="emit('select', list.id)"
-      >
-        <span class="name">{{ list.name }}</span>
-        <button class="delete" type="button" @click.stop="emit('delete', list.id)">×</button>
-      </div>
-    </template>
+    <button class="secondary-button nav-button" type="button" @click="emit('home')">Home</button>
+    <div class="separator"></div>
+    <div class="lists">
+      <div v-if="lists.length === 0" class="empty">No lists yet</div>
+      <template v-else>
+        <div
+          v-for="list in lists"
+          :key="list.id"
+          class="row"
+          :class="{ selected: list.id === selectedId }"
+          @click="emit('select', list.id)"
+        >
+          <span class="name">{{ list.name }}</span>
+          <button class="secondary-button delete" type="button" @click.stop="emit('delete', list.id)">×</button>
+        </div>
+      </template>
+    </div>
+    <div class="separator"></div>
+    <button class="secondary-button nav-button" type="button" @click="emit('settings')">Settings</button>
   </div>
 </template>
 
@@ -48,8 +62,25 @@ const emit = defineEmits(['select', 'delete']);
   gap: var(--sidebar-item-gap);
   padding: var(--sidebar-padding);
   background: var(--color-sidebar);
+  overflow: hidden;
+}
+
+/* The only scrolling part of the sidebar; min-height lets it shrink below its content. */
+.lists {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-item-gap);
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+/* Counterpart of rule::horizontal in Iced. */
+.separator {
+  flex-shrink: 0;
+  height: var(--border-width);
+  background: var(--color-border);
 }
 
 .empty {
@@ -96,8 +127,7 @@ const emit = defineEmits(['select', 'delete']);
 }
 
 /* Secondary button: no background or border; hover changes only the text color. */
-.delete {
-  flex-shrink: 0;
+.secondary-button {
   padding: var(--button-padding-y) var(--button-padding-x);
   border: none;
   border-radius: var(--button-radius);
@@ -109,7 +139,18 @@ const emit = defineEmits(['select', 'delete']);
   cursor: pointer;
 }
 
-.delete:hover {
+.secondary-button:hover {
   color: var(--color-secondary-button-text-hover);
+}
+
+.delete {
+  flex-shrink: 0;
+}
+
+.nav-button {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 100%;
+  text-align: left;
 }
 </style>

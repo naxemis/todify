@@ -102,7 +102,7 @@
   --color-sidebar: #0e1322;
   --color-row-hover: #1a2135;
   --color-row-selected: #222b45; /* selected list */
-  --color-border: #262f4a; /* not used by widgets yet */
+  --color-border: #262f4a; /* sidebar separators */
   --color-text: #fafaff;
   --color-text-secondary: #9aa2c2; /* captions, empty states */
   --color-primary-button: #283152;
