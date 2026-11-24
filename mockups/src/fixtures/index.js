@@ -3,12 +3,14 @@
  * gallery import fixtures only from this file. It re-exports every set of lists
  * under its own name and adds a registry that maps each name to its set. The
  * builders in `build.js` and the typedefs in `model.js` are not exported: the
- * consumers get ready data, not the tools that make it.
+ * consumers get ready data, not the tools that make it. It also exports the
+ * list of themes, which is not part of `fixtureSets`.
  *
  * This file holds no data of its own.
  */
 
 import { typicalLists } from './lists.js';
+import { themes } from './themes.js';
 import {
   noLists,
   emptyList,
@@ -18,7 +20,7 @@ import {
   manyCards,
 } from './edge-cases.js';
 
-export { typicalLists, noLists, emptyList, noCards, longNames, manyLists, manyCards };
+export { typicalLists, noLists, emptyList, noCards, longNames, manyLists, manyCards, themes };
 
 /**
  * Every fixture set by name. The key is exactly the name of the named export,

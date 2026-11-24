@@ -20,7 +20,7 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Spacing scales
   - [x] Corner radius
   - [x] Text sizes and font family
-  - [x] Color set (a single dark theme for now)
+  - [x] Color set with a dropdown list
   - [x] Name every token so it maps one-to-one to a Rust constant
 - [x] Fixtures
   - [x] Fake lists and items shaped like the `core` model
@@ -34,11 +34,11 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Confirm dialog built on the dialog frame
   - [x] Error dialog with caller-given buttons
   - [x] Toast
-- [ ] Screens
-  - [ ] Welcome
-  - [ ] Home
-  - [ ] List: sidebar, table, empty state when nothing is selected
-  - [ ] Settings
+- [x] Screens
+  - [x] Welcome
+  - [x] Home
+  - [x] List: sidebar, table, empty state when nothing is selected
+  - [x] Settings
 - [ ] Scene gallery
   - [ ] Scene list on the left, 640×480 frame on the right
   - [ ] Scene record: screen, screen state, optional overlay

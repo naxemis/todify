@@ -20,6 +20,7 @@ const COLOR_TOKENS = [
   "--color-danger-button-hover",
   "--color-danger-button-text",
   "--color-toast-title",
+  "--color-read-only",
   "--color-backdrop",
   "--color-shadow",
 ];

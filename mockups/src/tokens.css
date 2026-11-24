@@ -42,6 +42,11 @@
   --sidebar-width: 180px;
   --sidebar-padding: 8px; /* inside the sidebar */
   --sidebar-item-gap: 4px; /* between lists in the sidebar */
+  --screen-header-gap: 12px; /* between a screen header and its content */
+  --screen-header-item-gap: 8px; /* between the items of a screen header row */
+  --empty-state-gap: 12px; /* between the lines and the button of a screen's centered block, e.g. the Home hint */
+  --settings-section-gap: 16px; /* between the sections of the Settings screen */
+  --settings-label-gap: 4px; /* between a Settings section label and its content */
   --board-column-width: 200px; /* width of a kanban column */
   --board-column-gap: 12px; /* between kanban columns */
   --board-column-padding: 8px; /* inside a kanban column */
@@ -54,6 +59,8 @@
   --button-padding-x: 12px;
   --button-padding-y: 6px;
   --button-gap: 8px; /* between buttons in a row */
+  --dropdown-width: 200px; /* width of the dropdown field and its menu */
+  --dropdown-handle-gap: 8px; /* between the dropdown value and its arrow */
   --dialog-width: 360px;
   --dialog-padding: 16px; /* inside the dialog */
   --dialog-gap: 12px; /* between title, body and button row */
@@ -68,6 +75,7 @@
 
   /* Corner radius (theme-independent) */
   --button-radius: 6px;
+  --dropdown-radius: 6px; /* dropdown field and menu */
   --row-radius: 4px; /* sidebar and table rows */
   --board-column-radius: 8px;
   --card-radius: 6px;
@@ -117,6 +125,7 @@
   --color-danger-button-hover: #462b4d;
   --color-danger-button-text: #f08fa0;
   --color-toast-title: #e8cf96; /* warning title in the toast */
+  --color-read-only: #e8cf96; /* read-only mode indicator in a screen header */
   --color-backdrop: rgba(0, 0, 0, 0.5); /* dims the screen under a dialog */
   --color-shadow: rgba(0, 0, 0, 0.4); /* dialog and toast shadow */
 }
