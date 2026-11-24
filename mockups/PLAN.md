@@ -35,7 +35,7 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Error dialog with caller-given buttons
   - [x] Toast
 - [ ] Screens
-  - [ ] Welcome
+  - [x] Welcome
   - [ ] Home
   - [ ] List: sidebar, table, empty state when nothing is selected
   - [ ] Settings

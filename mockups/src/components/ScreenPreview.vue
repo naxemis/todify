@@ -9,6 +9,7 @@
 
 <script setup>
 import SidebarLayout from '../screens/SidebarLayout.vue';
+import Welcome from '../screens/Welcome.vue';
 import { typicalLists } from '../fixtures/index.js';
 
 /**
@@ -42,6 +43,23 @@ const groups = [
           home: () => onEvent('home'),
           settings: () => onEvent('settings'),
         },
+      },
+    ],
+  },
+  {
+    heading: 'Welcome',
+    cases: [
+      {
+        label: 'loading',
+        component: Welcome,
+        props: { loading: true },
+        events: { continue: () => onEvent('continue') },
+      },
+      {
+        label: 'ready',
+        component: Welcome,
+        props: { loading: false },
+        events: { continue: () => onEvent('continue') },
       },
     ],
   },
