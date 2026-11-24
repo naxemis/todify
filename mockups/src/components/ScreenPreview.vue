@@ -13,7 +13,7 @@ import Home from '../screens/Home.vue';
 import Welcome from '../screens/Welcome.vue';
 import List from '../screens/List.vue';
 import Settings from '../screens/Settings.vue';
-import { typicalLists, noLists, emptyList, noCards, longNames, manyCards } from '../fixtures/index.js';
+import { typicalLists, noLists, emptyList, noCards, longNames, manyCards, themes } from '../fixtures/index.js';
 
 /**
  * One group per screen.
@@ -117,17 +117,23 @@ const groups = [
   {
     heading: 'Settings',
     cases: [
-      { label: 'dark', theme: 'dark', dataPath: '/home/user/.local/share/todify/lists.json' },
-      { label: 'light', theme: 'light', dataPath: '/home/user/.local/share/todify/lists.json' },
+      { label: 'dark blue', theme: 'dark-blue', dataPath: '/home/user/.local/share/todify/lists.json' },
+      { label: 'placeholder selected', theme: 'placeholder-2', dataPath: '/home/user/.local/share/todify/lists.json' },
+      {
+        label: 'theme menu open',
+        theme: 'dark-blue',
+        themeMenuOpen: true,
+        dataPath: '/home/user/.local/share/todify/lists.json',
+      },
       {
         label: 'long data path',
-        theme: 'dark',
+        theme: 'dark-blue',
         dataPath: '/home/user/.local/share/todify/' + 'NoSpacesAnywhere'.repeat(5) + '/lists.json',
       },
-    ].map(({ label, theme, dataPath }) => ({
+    ].map(({ label, theme, themeMenuOpen, dataPath }) => ({
       label,
       component: Settings,
-      props: { theme, dataPath, version: '0.1.0' },
+      props: { theme, themes, themeMenuOpen, dataPath, version: '0.1.0' },
       events: {
         theme: (value) => onEvent('theme', value),
         back: () => onEvent('back'),

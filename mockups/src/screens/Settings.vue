@@ -1,18 +1,20 @@
 <!--
   Settings screen: the app settings. It has no sidebar, so it does not use
   SidebarLayout. From the top: a header with a "← Back" button and the title
-  "Settings", then three sections: "Theme" (a "Dark" and a "Light" button),
+  "Settings", then three sections: "Theme" (a Dropdown with the themes),
   "Data file" (the path of the file with the data) and "About" (the app
   version, for example "Todify 0.1.0").
-  Receives `theme` ("dark" or "light", default "dark"), `dataPath` (path of
-  the data file) and `version` (app version). Holds no state of its own.
-  Emits `theme` with "dark" or "light" when the matching button is clicked.
+  Receives `theme` (id of the selected theme), `themes` (the list of
+  `{ id, label }` themes, which comes from outside; the screen does not know
+  them), `themeMenuOpen` (preview only, passed to the Dropdown's `open`),
+  `dataPath` (path of the data file) and `version` (app version). Holds no
+  state of its own.
+  Emits `theme` with the id of the option chosen in the Dropdown.
   Emits `back`, without a parameter, when "← Back" is clicked; the parent
   decides where the app goes.
-  The button of the active theme is the primary variant, the other one is
-  secondary. Both have the same padding, so nothing moves when the theme
-  changes. A click only emits `theme`; the parent decides whether the theme
-  changes.
+  A choice only emits `theme`; the parent decides whether the theme changes.
+  The open menu lies over the "Data file" and "About" sections and does not
+  move them; that is the Dropdown's behavior.
   The data path is read-only and wraps inside the screen, so a long path
   never leaves the frame.
   Counterpart in the GUI: gui/src/screens/settings.rs.
@@ -20,14 +22,18 @@
 
 <script setup>
 import Button from '../widgets/Button.vue';
+import Dropdown from '../widgets/Dropdown.vue';
 
 defineProps({
-  /** Active theme: "dark" or "light". */
-  theme: {
-    type: String,
-    default: 'dark',
-    validator: (value) => ['dark', 'light'].includes(value),
-  },
+  /** Id of the selected theme. */
+  theme: { type: String, required: true },
+  /**
+   * Themes to choose from, in display order.
+   * @type {import('vue').PropType<{ id: string, label: string }[]>}
+   */
+  themes: { type: Array, required: true },
+  /** Preview only: whether the theme menu is shown. */
+  themeMenuOpen: { type: Boolean, default: false },
   /** Path of the data file, shown read-only. */
   dataPath: { type: String, required: true },
   /** App version, for example "0.1.0". */
@@ -46,10 +52,7 @@ const emit = defineEmits(['theme', 'back']);
     <div class="sections">
       <div class="section">
         <span class="label">Theme</span>
-        <div class="theme-buttons">
-          <Button :variant="theme === 'dark' ? 'primary' : 'secondary'" @click="emit('theme', 'dark')">Dark</Button>
-          <Button :variant="theme === 'light' ? 'primary' : 'secondary'" @click="emit('theme', 'light')">Light</Button>
-        </div>
+        <Dropdown :options="themes" :selected-id="theme" :open="themeMenuOpen" @select="emit('theme', $event)" />
       </div>
       <div class="section">
         <span class="label">Data file</span>
@@ -109,12 +112,6 @@ const emit = defineEmits(['theme', 'back']);
   font-size: var(--font-size-caption);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-}
-
-.theme-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: var(--button-gap);
 }
 
 .data-path {
