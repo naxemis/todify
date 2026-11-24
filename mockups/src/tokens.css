@@ -42,6 +42,13 @@
   --sidebar-width: 180px;
   --sidebar-padding: 8px; /* inside the sidebar */
   --sidebar-item-gap: 4px; /* between lists in the sidebar */
+  --board-column-width: 200px; /* width of a kanban column */
+  --board-column-gap: 12px; /* between kanban columns */
+  --board-column-padding: 8px; /* inside a kanban column */
+  --card-gap: 8px; /* between the column header and cards, and between cards */
+  --card-padding-x: 12px;
+  --card-padding-y: 8px;
+  --card-text-gap: 4px; /* between the card name and description */
   --row-padding-x: 12px; /* sidebar and table rows */
   --row-height: 32px; /* content is centered vertically, so no vertical padding */
   --button-padding-x: 12px;
@@ -61,6 +68,8 @@
   /* Corner radius (theme-independent) */
   --button-radius: 6px;
   --row-radius: 4px; /* sidebar and table rows */
+  --board-column-radius: 8px;
+  --card-radius: 6px;
   --dialog-radius: 10px;
   --toast-radius: 10px;
 
@@ -89,10 +98,11 @@
      under these same names. */
   --color-window: #121829;
   --color-panel: #1c2440; /* dialog, toast, table */
+  --color-card: #252e4d; /* card tile on a board column */
   --color-sidebar: #0e1322;
   --color-row-hover: #1a2135;
   --color-row-selected: #222b45; /* selected list */
-  --color-border: #262f4a; /* not used by widgets; kept for table separators */
+  --color-border: #262f4a; /* not used by widgets yet */
   --color-text: #fafaff;
   --color-text-secondary: #9aa2c2; /* captions, empty states */
   --color-primary-button: #283152;

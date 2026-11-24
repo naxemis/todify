@@ -6,6 +6,7 @@
 <script setup>
 import { typicalLists, noLists, longNames, manyLists } from '../fixtures/index.js';
 import Sidebar from '../widgets/Sidebar.vue';
+import Table from '../widgets/Table.vue';
 
 const sidebarCases = [
   { label: 'typicalLists', lists: typicalLists, selectedId: null },
@@ -14,6 +15,8 @@ const sidebarCases = [
   { label: 'longNames, selected', lists: longNames, selectedId: longNames[0].id },
   { label: 'manyLists, selected', lists: manyLists, selectedId: manyLists[0].id },
 ];
+
+const tableCases = [{ label: 'typicalLists, first list', list: typicalLists[0] }];
 
 /** @param {number} id */
 function onSelect(id) {
@@ -42,7 +45,14 @@ function onDelete(id) {
 
     <section class="section">
       <h2 class="heading">Table</h2>
-      <div class="slot table-slot"></div>
+      <div class="sidebar-row">
+        <div v-for="item in tableCases" :key="item.label" class="case">
+          <span class="caption">{{ item.label }}</span>
+          <div class="slot table-slot">
+            <Table :list="item.list" />
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </template>
