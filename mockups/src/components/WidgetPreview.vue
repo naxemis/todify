@@ -4,10 +4,16 @@
 -->
 
 <script setup>
-import { typicalLists } from '../fixtures/index.js';
+import { typicalLists, noLists, longNames, manyLists } from '../fixtures/index.js';
 import Sidebar from '../widgets/Sidebar.vue';
 
-const firstListId = typicalLists[0].id;
+const sidebarCases = [
+  { label: 'typicalLists', lists: typicalLists, selectedId: null },
+  { label: 'typicalLists, selected', lists: typicalLists, selectedId: typicalLists[0].id },
+  { label: 'noLists', lists: noLists, selectedId: null },
+  { label: 'longNames, selected', lists: longNames, selectedId: longNames[0].id },
+  { label: 'manyLists, selected', lists: manyLists, selectedId: manyLists[0].id },
+];
 
 /** @param {number} id */
 function onSelect(id) {
@@ -25,11 +31,11 @@ function onDelete(id) {
     <section class="section">
       <h2 class="heading">Sidebar</h2>
       <div class="sidebar-row">
-        <div class="slot sidebar-slot">
-          <Sidebar :lists="typicalLists" :selected-id="null" @select="onSelect" @delete="onDelete" />
-        </div>
-        <div class="slot sidebar-slot">
-          <Sidebar :lists="typicalLists" :selected-id="firstListId" @select="onSelect" @delete="onDelete" />
+        <div v-for="item in sidebarCases" :key="item.label" class="case">
+          <span class="caption">{{ item.label }}</span>
+          <div class="slot sidebar-slot">
+            <Sidebar :lists="item.lists" :selected-id="item.selectedId" @select="onSelect" @delete="onDelete" />
+          </div>
         </div>
       </div>
     </section>
@@ -65,7 +71,19 @@ function onDelete(id) {
 .sidebar-row {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: var(--button-gap);
+}
+
+.case {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sidebar-item-gap);
+}
+
+.caption {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
 }
 
 /* Empty place for a widget. Scrolling is the widget's job, so overflow is hidden. */

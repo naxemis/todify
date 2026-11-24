@@ -5,6 +5,7 @@
   id of the clicked list; the parent decides what is selected. Emits `delete`
   with the id of the list whose "×" button was clicked (without `select`); the
   widget deletes nothing itself, the parent decides.
+  Edge cases: no lists shows a single non-interactive "No lists yet" row, names stay on one line and are clipped without an ellipsis (the "×" is always visible), and rows keep their full height while the inside of the sidebar scrolls.
   Counterpart in the GUI: gui/src/widgets/sidebar.rs.
 -->
 
@@ -21,16 +22,19 @@ const emit = defineEmits(['select', 'delete']);
 
 <template>
   <div class="sidebar">
-    <div
-      v-for="list in lists"
-      :key="list.id"
-      class="row"
-      :class="{ selected: list.id === selectedId }"
-      @click="emit('select', list.id)"
-    >
-      <span class="name">{{ list.name }}</span>
-      <button class="delete" type="button" @click.stop="emit('delete', list.id)">×</button>
-    </div>
+    <div v-if="lists.length === 0" class="empty">No lists yet</div>
+    <template v-else>
+      <div
+        v-for="list in lists"
+        :key="list.id"
+        class="row"
+        :class="{ selected: list.id === selectedId }"
+        @click="emit('select', list.id)"
+      >
+        <span class="name">{{ list.name }}</span>
+        <button class="delete" type="button" @click.stop="emit('delete', list.id)">×</button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -44,10 +48,24 @@ const emit = defineEmits(['select', 'delete']);
   gap: var(--sidebar-item-gap);
   padding: var(--sidebar-padding);
   background: var(--color-sidebar);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.empty {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: var(--row-height);
+  padding: 0 var(--row-padding-x);
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
 }
 
 .row {
   box-sizing: border-box;
+  flex-shrink: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -70,6 +88,9 @@ const emit = defineEmits(['select', 'delete']);
 
 .name {
   flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
   font-size: var(--font-size-body);
   color: var(--color-text);
 }
