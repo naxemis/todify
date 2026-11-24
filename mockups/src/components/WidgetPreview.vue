@@ -13,6 +13,7 @@ import {
   manyLists,
   manyCards,
 } from '../fixtures/index.js';
+import Button from '../widgets/Button.vue';
 import Sidebar from '../widgets/Sidebar.vue';
 import Table from '../widgets/Table.vue';
 
@@ -31,6 +32,11 @@ const tableCases = [
   { label: 'longNames', list: longNames[0] },
   { label: 'manyCards', list: manyCards[0] },
 ];
+
+/** @param {string} variant */
+function onButtonClick(variant) {
+  console.log(`click ${variant}`);
+}
 
 /** @param {number} id */
 function onSelect(id) {
@@ -53,6 +59,20 @@ function onSettings() {
 
 <template>
   <div class="page">
+    <section class="section">
+      <h2 class="heading">Button</h2>
+      <div class="sidebar-row">
+        <Button variant="primary" @click="onButtonClick('primary')">Primary</Button>
+        <Button variant="secondary" @click="onButtonClick('secondary')">Secondary</Button>
+        <Button variant="danger" @click="onButtonClick('danger')">Danger</Button>
+      </div>
+      <div class="sidebar-row">
+        <Button variant="primary" @click="onButtonClick('primary')">
+          A very long label that must stay on a single line and never wrap, even when it is much wider than the page
+        </Button>
+      </div>
+    </section>
+
     <section class="section">
       <h2 class="heading">Sidebar</h2>
       <div class="sidebar-row">
