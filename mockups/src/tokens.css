@@ -57,8 +57,8 @@
   --dialog-width: 360px;
   --dialog-padding: 16px; /* inside the dialog */
   --dialog-gap: 12px; /* between title, body and button row */
-  --toast-min-width: 180px; /* the toast grows with its content, between min and max */
-  --toast-max-width: 360px;
+  --toast-min-width: 160px; /* the toast grows with its content, between min and max */
+  --toast-max-width: 320px;
   --toast-padding: 12px;
   --toast-offset: 16px; /* distance from the window edge */
   --toast-gap: 4px; /* between the title row and the message */
