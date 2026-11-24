@@ -13,6 +13,11 @@ const firstListId = typicalLists[0].id;
 function onSelect(id) {
   console.log('select', id);
 }
+
+/** @param {number} id */
+function onDelete(id) {
+  console.log('delete', id);
+}
 </script>
 
 <template>
@@ -21,10 +26,10 @@ function onSelect(id) {
       <h2 class="heading">Sidebar</h2>
       <div class="sidebar-row">
         <div class="slot sidebar-slot">
-          <Sidebar :lists="typicalLists" :selected-id="null" @select="onSelect" />
+          <Sidebar :lists="typicalLists" :selected-id="null" @select="onSelect" @delete="onDelete" />
         </div>
         <div class="slot sidebar-slot">
-          <Sidebar :lists="typicalLists" :selected-id="firstListId" @select="onSelect" />
+          <Sidebar :lists="typicalLists" :selected-id="firstListId" @select="onSelect" @delete="onDelete" />
         </div>
       </div>
     </section>

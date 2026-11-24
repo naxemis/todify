@@ -2,7 +2,9 @@
   Sidebar widget: the lists of the app, one row per list.
   Receives `lists` (all lists, in display order) and `selectedId` (id of the
   selected list, or null). Holds no state of its own. Emits `select` with the
-  id of the clicked list; the parent decides what is selected.
+  id of the clicked list; the parent decides what is selected. Emits `delete`
+  with the id of the list whose "×" button was clicked (without `select`); the
+  widget deletes nothing itself, the parent decides.
   Counterpart in the GUI: gui/src/widgets/sidebar.rs.
 -->
 
@@ -14,7 +16,7 @@ defineProps({
   selectedId: { type: Number, default: null },
 });
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'delete']);
 </script>
 
 <template>
@@ -27,6 +29,7 @@ const emit = defineEmits(['select']);
       @click="emit('select', list.id)"
     >
       <span class="name">{{ list.name }}</span>
+      <button class="delete" type="button" @click.stop="emit('delete', list.id)">×</button>
     </div>
   </div>
 </template>
@@ -49,7 +52,8 @@ const emit = defineEmits(['select']);
   flex-direction: row;
   align-items: center;
   height: var(--row-height);
-  padding: 0 var(--row-padding-x);
+  /* No right padding: the delete button brings its own, so "×" sits at the same inset as the name. */
+  padding: 0 0 0 var(--row-padding-x);
   border-radius: var(--row-radius);
   background: transparent;
   cursor: pointer;
@@ -65,7 +69,26 @@ const emit = defineEmits(['select']);
 }
 
 .name {
+  flex: 1;
   font-size: var(--font-size-body);
   color: var(--color-text);
+}
+
+/* Secondary button: no background or border; hover changes only the text color. */
+.delete {
+  flex-shrink: 0;
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border: none;
+  border-radius: var(--button-radius);
+  background: transparent;
+  color: var(--color-secondary-button-text);
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height);
+  cursor: pointer;
+}
+
+.delete:hover {
+  color: var(--color-secondary-button-text-hover);
 }
 </style>
