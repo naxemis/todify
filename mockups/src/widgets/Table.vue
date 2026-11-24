@@ -1,6 +1,9 @@
 <!--
   Table widget: a kanban board of one list. Columns sit side by side, each
   with its cards. It only displays the `list` prop: no state, no events.
+  The board scrolls horizontally and the cards of each column scroll
+  vertically. This matches a horizontal `scrollable` with vertical
+  `scrollable`s in the columns in Iced.
   Counterpart in the GUI: gui/src/widgets/table.rs.
 -->
 
@@ -13,11 +16,15 @@ defineProps({
 
 <template>
   <div class="board">
+    <div v-if="list.columns.length === 0" class="empty-text">No columns yet</div>
     <div v-for="column in list.columns" :key="column.id" class="column">
       <div class="column-name">{{ column.name }}</div>
-      <div v-for="card in column.cards" :key="card.id" class="card">
-        <div class="card-name">{{ card.name }}</div>
-        <div v-if="card.description !== ''" class="card-description">{{ card.description }}</div>
+      <div class="card-list">
+        <div v-if="column.cards.length === 0" class="empty-text">No cards</div>
+        <div v-for="card in column.cards" :key="card.id" class="card">
+          <div class="card-name">{{ card.name }}</div>
+          <div v-if="card.description !== ''" class="card-description">{{ card.description }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -33,6 +40,8 @@ defineProps({
   align-items: flex-start;
   gap: var(--board-column-gap);
   padding: var(--window-padding);
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--color-window);
 }
 
@@ -40,6 +49,7 @@ defineProps({
   box-sizing: border-box;
   flex-shrink: 0;
   width: var(--board-column-width);
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
@@ -55,8 +65,23 @@ defineProps({
   color: var(--color-text-secondary);
 }
 
+.card-list {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.empty-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-secondary);
+}
+
 .card {
   box-sizing: border-box;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: var(--card-text-gap);

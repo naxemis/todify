@@ -4,7 +4,15 @@
 -->
 
 <script setup>
-import { typicalLists, noLists, longNames, manyLists } from '../fixtures/index.js';
+import {
+  typicalLists,
+  noLists,
+  emptyList,
+  noCards,
+  longNames,
+  manyLists,
+  manyCards,
+} from '../fixtures/index.js';
 import Sidebar from '../widgets/Sidebar.vue';
 import Table from '../widgets/Table.vue';
 
@@ -16,7 +24,13 @@ const sidebarCases = [
   { label: 'manyLists, selected', lists: manyLists, selectedId: manyLists[0].id },
 ];
 
-const tableCases = [{ label: 'typicalLists, first list', list: typicalLists[0] }];
+const tableCases = [
+  { label: 'typicalLists, first list', list: typicalLists[0] },
+  { label: 'emptyList', list: emptyList[0] },
+  { label: 'noCards', list: noCards[0] },
+  { label: 'longNames', list: longNames[0] },
+  { label: 'manyCards', list: manyCards[0] },
+];
 
 /** @param {number} id */
 function onSelect(id) {
