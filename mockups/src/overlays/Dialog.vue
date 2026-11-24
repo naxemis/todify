@@ -8,7 +8,9 @@
   the `id` of the clicked button and nothing else.
   Edge cases: the title and the content wrap, including long words without
   spaces, and the dialog never scrolls. The button row is aligned to the right
-  and keeps the order given by the caller, so the main action comes last.
+  and keeps the order given by the caller; the frame does not reorder it.
+  By convention the main action comes last, unless the caller puts a
+  destructive choice at the far right edge.
   The frame draws only its own box: the backdrop and the position on the
   screen belong to the overlay layer, not to the frame.
   Counterpart in the GUI: gui/src/overlays/dialog.rs.

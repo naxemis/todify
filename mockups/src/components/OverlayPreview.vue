@@ -12,6 +12,7 @@
 <script setup>
 import Dialog from '../overlays/Dialog.vue';
 import ConfirmDialog from '../overlays/ConfirmDialog.vue';
+import ErrorDialog from '../overlays/ErrorDialog.vue';
 import { typicalLists, longNames } from '../fixtures/index.js';
 
 const dialogCases = [
@@ -79,6 +80,42 @@ const confirmCases = [
   },
 ];
 
+const saveErrorMessage =
+  'Your changes are still here. Retry now, or dismiss and keep working; the next save will try again.';
+
+const saveErrorButtons = [
+  { id: 'dismiss', label: 'Dismiss', variant: 'secondary' },
+  { id: 'retry', label: 'Retry', variant: 'primary' },
+];
+
+const errorCases = [
+  {
+    label: 'load error',
+    title: 'Could not load lists',
+    message:
+      'The lists file is damaged or cannot be read. Retry, open the lists read-only, or work anyway and overwrite the file on the next save.',
+    detail: '/home/user/.local/share/todify/lists.json: expected value at line 1 column 1',
+    buttons: [
+      { id: 'read_only', label: 'Read-only', variant: 'secondary' },
+      { id: 'retry', label: 'Retry', variant: 'primary' },
+      { id: 'work_anyway', label: 'Work anyway', variant: 'danger' },
+    ],
+  },
+  {
+    label: 'save error',
+    title: 'Could not save lists',
+    message: saveErrorMessage,
+    detail: 'Permission denied (os error 13)',
+    buttons: saveErrorButtons,
+  },
+  {
+    label: 'save error, no detail',
+    title: 'Could not save lists',
+    message: saveErrorMessage,
+    buttons: saveErrorButtons,
+  },
+];
+
 function onChoose(id) {
   console.log(`choose ${id}`);
 }
@@ -113,6 +150,25 @@ function onChoose(id) {
               :message="item.message"
               :confirm-label="item.confirmLabel"
               :danger="item.danger"
+              @choose="onChoose"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="heading">Error dialog</h2>
+      <div v-for="item in errorCases" :key="item.label" class="case">
+        <span class="caption">{{ item.label }}</span>
+        <div class="slot">
+          <div class="screen">Screen</div>
+          <div class="layer layer-dialog">
+            <ErrorDialog
+              :title="item.title"
+              :message="item.message"
+              :detail="item.detail"
+              :buttons="item.buttons"
               @choose="onChoose"
             />
           </div>
