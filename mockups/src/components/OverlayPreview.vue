@@ -11,6 +11,8 @@
 
 <script setup>
 import Dialog from '../overlays/Dialog.vue';
+import ConfirmDialog from '../overlays/ConfirmDialog.vue';
+import { typicalLists, longNames } from '../fixtures/index.js';
 
 const dialogCases = [
   {
@@ -49,6 +51,34 @@ const dialogCases = [
   },
 ];
 
+function deleteMessage(name) {
+  return `“${name}” and all its cards will be deleted. This cannot be undone.`;
+}
+
+const confirmCases = [
+  {
+    label: 'delete list',
+    title: 'Delete list?',
+    message: deleteMessage(typicalLists[0].name),
+    confirmLabel: 'Delete',
+    danger: true,
+  },
+  {
+    label: 'delete list, long name',
+    title: 'Delete list?',
+    message: deleteMessage(longNames[0].name),
+    confirmLabel: 'Delete',
+    danger: true,
+  },
+  {
+    label: 'not dangerous',
+    title: 'Reload lists?',
+    message: 'Unsaved changes will be lost.',
+    confirmLabel: 'Reload',
+    danger: false,
+  },
+];
+
 function onChoose(id) {
   console.log(`choose ${id}`);
 }
@@ -66,6 +96,25 @@ function onChoose(id) {
             <Dialog :title="item.title" :buttons="item.buttons" @choose="onChoose">
               {{ item.body }}
             </Dialog>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="heading">Confirm dialog</h2>
+      <div v-for="item in confirmCases" :key="item.label" class="case">
+        <span class="caption">{{ item.label }}</span>
+        <div class="slot">
+          <div class="screen">Screen</div>
+          <div class="layer layer-dialog">
+            <ConfirmDialog
+              :title="item.title"
+              :message="item.message"
+              :confirm-label="item.confirmLabel"
+              :danger="item.danger"
+              @choose="onChoose"
+            />
           </div>
         </div>
       </div>
