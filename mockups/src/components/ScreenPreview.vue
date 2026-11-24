@@ -11,7 +11,8 @@
 import SidebarLayout from '../screens/SidebarLayout.vue';
 import Home from '../screens/Home.vue';
 import Welcome from '../screens/Welcome.vue';
-import { typicalLists, noLists } from '../fixtures/index.js';
+import List from '../screens/List.vue';
+import { typicalLists, noLists, emptyList, noCards, longNames, manyCards } from '../fixtures/index.js';
 
 /**
  * One group per screen.
@@ -76,6 +77,27 @@ const groups = [
       events: {
         select: (id) => onEvent('select', id),
         create: () => onEvent('create'),
+        delete: (id) => onEvent('delete', id),
+        home: () => onEvent('home'),
+        settings: () => onEvent('settings'),
+      },
+    })),
+  },
+  {
+    heading: 'List',
+    cases: [
+      { label: 'typicalLists, first selected', lists: typicalLists, selectedId: typicalLists[0].id },
+      { label: 'typicalLists, nothing selected', lists: typicalLists, selectedId: null },
+      { label: 'emptyList', lists: emptyList, selectedId: emptyList[0].id },
+      { label: 'noCards', lists: noCards, selectedId: noCards[0].id },
+      { label: 'longNames', lists: longNames, selectedId: longNames[0].id },
+      { label: 'manyCards', lists: manyCards, selectedId: manyCards[0].id },
+    ].map(({ label, lists, selectedId }) => ({
+      label,
+      component: List,
+      props: { lists, selectedId },
+      events: {
+        select: (id) => onEvent('select', id),
         delete: (id) => onEvent('delete', id),
         home: () => onEvent('home'),
         settings: () => onEvent('settings'),
