@@ -14,10 +14,13 @@
   names stay on one line and are clipped without an ellipsis (the "×" is
   always visible), and rows keep their full height while the lists area
   scrolls.
+  All buttons are the shared Button widget (secondary variant).
   Counterpart in the GUI: gui/src/widgets/sidebar.rs.
 -->
 
 <script setup>
+import Button from './Button.vue';
+
 defineProps({
   /** @type {import('vue').PropType<import('../fixtures/model.js').List[]>} */
   lists: { type: Array, required: true },
@@ -30,7 +33,7 @@ const emit = defineEmits(['select', 'delete', 'home', 'settings']);
 
 <template>
   <div class="sidebar">
-    <button class="secondary-button nav-button" type="button" @click="emit('home')">Home</button>
+    <Button class="nav" variant="secondary" fill @click="emit('home')">Home</Button>
     <div class="separator"></div>
     <div class="lists">
       <div v-if="lists.length === 0" class="empty">No lists yet</div>
@@ -43,12 +46,16 @@ const emit = defineEmits(['select', 'delete', 'home', 'settings']);
           @click="emit('select', list.id)"
         >
           <span class="name">{{ list.name }}</span>
-          <button class="secondary-button delete" type="button" @click.stop="emit('delete', list.id)">×</button>
+          <!-- Browser-only workaround: Button emits `click` without the native event, so
+               `.stop` cannot go on it. In Iced the inner button captures the click itself. -->
+          <div class="delete" @click.stop>
+            <Button variant="secondary" @click="emit('delete', list.id)">×</Button>
+          </div>
         </div>
       </template>
     </div>
     <div class="separator"></div>
-    <button class="secondary-button nav-button" type="button" @click="emit('settings')">Settings</button>
+    <Button class="nav" variant="secondary" fill @click="emit('settings')">Settings</Button>
   </div>
 </template>
 
@@ -126,31 +133,15 @@ const emit = defineEmits(['select', 'delete', 'home', 'settings']);
   color: var(--color-text);
 }
 
-/* Secondary button: no background or border; hover changes only the text color. */
-.secondary-button {
-  padding: var(--button-padding-y) var(--button-padding-x);
-  border: none;
-  border-radius: var(--button-radius);
-  background: transparent;
-  color: var(--color-secondary-button-text);
-  font-family: inherit;
-  font-size: var(--font-size-body);
-  line-height: var(--line-height);
-  cursor: pointer;
+/* Home and Settings: keep their full height when the lists area is tall. */
+.nav {
+  flex-shrink: 0;
 }
 
-.secondary-button:hover {
-  color: var(--color-secondary-button-text-hover);
-}
-
+/* Wrapper of the "×" button. display: flex keeps the button the same size as
+   before (no inline baseline gap inside the wrapper). */
 .delete {
+  display: flex;
   flex-shrink: 0;
-}
-
-.nav-button {
-  box-sizing: border-box;
-  flex-shrink: 0;
-  width: 100%;
-  text-align: left;
 }
 </style>

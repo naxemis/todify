@@ -4,9 +4,11 @@
   "secondary" (no background or border) or "danger" (filled, for destructive
   actions). In Iced each variant is one style function.
   Receives `variant`, which must be one of the three values above; any other
-  value is rejected by the validator. Holds no state of its own. Emits
-  `click`, without a parameter, when the button is clicked; the parent decides
-  what the click means.
+  value is rejected by the validator. Receives `fill` (default false): when
+  true, the button takes the full width of its parent and the label is aligned
+  to the left; in Iced this is `width(Length::Fill)`. Holds no state of its
+  own. Emits `click`, without a parameter, when the button is clicked; the
+  parent decides what the click means.
   Edge cases: a long label stays on one line and never wraps, so the button
   grows wider instead of taller. The secondary variant never has a background,
   and its hover changes only the text color.
@@ -21,13 +23,15 @@ defineProps({
     default: 'primary',
     validator: (value) => ['primary', 'secondary', 'danger'].includes(value),
   },
+  /** Take the full width of the parent, with the label aligned to the left. */
+  fill: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['click']);
 </script>
 
 <template>
-  <button class="button" :class="variant" type="button" @click="emit('click')">
+  <button class="button" :class="[variant, { fill }]" type="button" @click="emit('click')">
     <slot />
   </button>
 </template>
@@ -42,6 +46,13 @@ const emit = defineEmits(['click']);
   line-height: var(--line-height);
   white-space: nowrap;
   cursor: pointer;
+}
+
+/* Counterpart of width(Length::Fill) in Iced. */
+.fill {
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
 }
 
 .primary {
