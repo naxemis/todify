@@ -25,9 +25,9 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
 - [x] Fixtures
   - [x] Fake lists and items shaped like the `core` model
   - [x] Edge cases: no lists, empty list, very long name, enough items to scroll
-- [ ] Widgets
-  - [ ] Sidebar: lists, selected list, select and delete events
-  - [ ] Table: items of the selected list, stateless
+- [x] Widgets
+  - [x] Sidebar: lists, selected list, select and delete events
+  - [x] Table: items of the selected list, stateless
 - [ ] Overlays
   - [ ] Dialog frame: title, body slot, button row; emits only the chosen button
   - [ ] Confirm dialog built on the dialog frame
