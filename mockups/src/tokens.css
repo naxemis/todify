@@ -42,6 +42,8 @@
   --sidebar-width: 180px;
   --sidebar-padding: 8px; /* inside the sidebar */
   --sidebar-item-gap: 4px; /* between lists in the sidebar */
+  --screen-header-gap: 12px; /* between a screen header and its content */
+  --empty-state-gap: 12px; /* between the lines and the button of a screen's centered block, e.g. the Home hint */
   --board-column-width: 200px; /* width of a kanban column */
   --board-column-gap: 12px; /* between kanban columns */
   --board-column-padding: 8px; /* inside a kanban column */

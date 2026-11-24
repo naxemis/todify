@@ -9,8 +9,9 @@
 
 <script setup>
 import SidebarLayout from '../screens/SidebarLayout.vue';
+import Home from '../screens/Home.vue';
 import Welcome from '../screens/Welcome.vue';
-import { typicalLists } from '../fixtures/index.js';
+import { typicalLists, noLists } from '../fixtures/index.js';
 
 /**
  * One group per screen.
@@ -62,6 +63,24 @@ const groups = [
         events: { continue: () => onEvent('continue') },
       },
     ],
+  },
+  {
+    heading: 'Home',
+    cases: [
+      { label: 'typicalLists', lists: typicalLists },
+      { label: 'noLists', lists: noLists },
+    ].map(({ label, lists }) => ({
+      label,
+      component: Home,
+      props: { lists },
+      events: {
+        select: (id) => onEvent('select', id),
+        create: () => onEvent('create'),
+        delete: (id) => onEvent('delete', id),
+        home: () => onEvent('home'),
+        settings: () => onEvent('settings'),
+      },
+    })),
   },
 ];
 

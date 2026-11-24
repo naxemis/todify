@@ -36,7 +36,7 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Toast
 - [ ] Screens
   - [x] Welcome
-  - [ ] Home
+  - [x] Home
   - [ ] List: sidebar, table, empty state when nothing is selected
   - [ ] Settings
 - [ ] Scene gallery
