@@ -19,7 +19,7 @@ const COLOR_TOKENS = [
   "--color-danger-button",
   "--color-danger-button-hover",
   "--color-danger-button-text",
-  "--color-warning-icon",
+  "--color-toast-title",
   "--color-backdrop",
   "--color-shadow",
 ];
@@ -61,28 +61,10 @@ onMounted(() => {
     <section class="section">
       <h2 class="heading">Window frame</h2>
       <div class="frame">
-        <div class="buttons">
-          <button class="button primary">Save</button>
-          <button class="button danger">Delete</button>
-        </div>
-
         <div class="sidebar">
           <div class="row">Plain row</div>
           <div class="row hoverable">Hover me</div>
           <div class="row selected">Selected row</div>
-        </div>
-
-        <div class="dialog">
-          <div class="dialog-title-text">Delete list?</div>
-          <div>This action cannot be undone.</div>
-          <div class="buttons">
-            <button class="button secondary-button">Cancel</button>
-            <button class="button danger">Delete</button>
-          </div>
-        </div>
-
-        <div class="toast">
-          <span>Could not save changes.</span>
         </div>
       </div>
     </section>
@@ -173,51 +155,6 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.buttons {
-  display: flex;
-  flex-direction: row;
-  gap: var(--button-gap);
-}
-
-.button {
-  padding: var(--button-padding-y) var(--button-padding-x);
-  border: none;
-  border-radius: var(--button-radius);
-  font-family: inherit;
-  font-size: var(--font-size-body);
-  line-height: var(--line-height);
-  cursor: pointer;
-}
-
-.primary {
-  background: var(--color-primary-button);
-  color: var(--color-primary-button-text);
-}
-
-.primary:hover {
-  background: var(--color-primary-button-hover);
-}
-
-/* Never has a background: "transparent" is Iced's background None in
-   both Active and Hovered. Hover only changes the text color. */
-.secondary-button {
-  background: transparent;
-  color: var(--color-secondary-button-text);
-}
-
-.secondary-button:hover {
-  color: var(--color-secondary-button-text-hover);
-}
-
-.danger {
-  background: var(--color-danger-button);
-  color: var(--color-danger-button-text);
-}
-
-.danger:hover {
-  background: var(--color-danger-button-hover);
-}
-
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -241,36 +178,5 @@ onMounted(() => {
 
 .selected {
   background: var(--color-row-selected);
-}
-
-.dialog {
-  display: flex;
-  flex-direction: column;
-  gap: var(--dialog-gap);
-  width: var(--dialog-width);
-  padding: var(--dialog-padding);
-  background: var(--color-panel);
-  border-radius: var(--dialog-radius);
-  box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur)
-    var(--color-shadow);
-}
-
-.dialog-title-text {
-  font-size: var(--font-size-dialog-title);
-  font-weight: var(--font-weight-semibold);
-}
-
-.toast {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--toast-icon-gap);
-  width: var(--toast-width);
-  padding: var(--toast-padding);
-  background: var(--color-panel);
-  color: var(--color-text);
-  border-radius: var(--toast-radius);
-  box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur)
-    var(--color-shadow);
 }
 </style>
