@@ -12,8 +12,10 @@ import {
   longNames,
   manyLists,
   manyCards,
+  themes,
 } from '../fixtures/index.js';
 import Button from '../widgets/Button.vue';
+import Dropdown from '../widgets/Dropdown.vue';
 import Sidebar from '../widgets/Sidebar.vue';
 import Table from '../widgets/Table.vue';
 
@@ -31,6 +33,23 @@ const tableCases = [
   { label: 'noCards', list: noCards[0] },
   { label: 'longNames', list: longNames[0] },
   { label: 'manyCards', list: manyCards[0] },
+];
+
+const longLabel = 'NoSpacesAnywhere'.repeat(5);
+
+const dropdownCases = [
+  { label: 'closed', options: themes, selectedId: themes[0].id, open: false },
+  { label: 'closed, nothing selected', options: themes, selectedId: null, open: false },
+  { label: 'open', options: themes, selectedId: themes[0].id, open: true },
+  {
+    label: 'long label, open',
+    options: [
+      { id: 'long', label: longLabel },
+      { id: 'short', label: 'Short' },
+    ],
+    selectedId: 'long',
+    open: true,
+  },
 ];
 
 /** @param {string} variant */
@@ -54,6 +73,11 @@ function onHome() {
 
 function onSettings() {
   console.log('settings');
+}
+
+/** @param {string} id */
+function onDropdownSelect(id) {
+  console.log('dropdown', id);
 }
 </script>
 
@@ -99,6 +123,23 @@ function onSettings() {
           <span class="caption">{{ item.label }}</span>
           <div class="slot table-slot">
             <Table :list="item.list" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="heading">Dropdown</h2>
+      <div class="sidebar-row">
+        <div v-for="item in dropdownCases" :key="item.label" class="case">
+          <span class="caption">{{ item.label }}</span>
+          <div class="slot table-slot">
+            <Dropdown
+              :options="item.options"
+              :selected-id="item.selectedId"
+              :open="item.open"
+              @select="onDropdownSelect"
+            />
           </div>
         </div>
       </div>
