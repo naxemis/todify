@@ -34,11 +34,11 @@ Visual mockups of the Todify GUI built with Vue. They are the reference for colo
   - [x] Confirm dialog built on the dialog frame
   - [x] Error dialog with caller-given buttons
   - [x] Toast
-- [ ] Screens
+- [x] Screens
   - [x] Welcome
   - [x] Home
   - [x] List: sidebar, table, empty state when nothing is selected
-  - [ ] Settings
+  - [x] Settings
 - [ ] Scene gallery
   - [ ] Scene list on the left, 640×480 frame on the right
   - [ ] Scene record: screen, screen state, optional overlay

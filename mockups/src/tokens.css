@@ -44,6 +44,8 @@
   --sidebar-item-gap: 4px; /* between lists in the sidebar */
   --screen-header-gap: 12px; /* between a screen header and its content */
   --empty-state-gap: 12px; /* between the lines and the button of a screen's centered block, e.g. the Home hint */
+  --settings-section-gap: 16px; /* between the sections of the Settings screen */
+  --settings-label-gap: 4px; /* between a Settings section label and its content */
   --board-column-width: 200px; /* width of a kanban column */
   --board-column-gap: 12px; /* between kanban columns */
   --board-column-padding: 8px; /* inside a kanban column */

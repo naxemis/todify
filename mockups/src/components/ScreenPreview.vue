@@ -12,6 +12,7 @@ import SidebarLayout from '../screens/SidebarLayout.vue';
 import Home from '../screens/Home.vue';
 import Welcome from '../screens/Welcome.vue';
 import List from '../screens/List.vue';
+import Settings from '../screens/Settings.vue';
 import { typicalLists, noLists, emptyList, noCards, longNames, manyCards } from '../fixtures/index.js';
 
 /**
@@ -101,6 +102,26 @@ const groups = [
         delete: (id) => onEvent('delete', id),
         home: () => onEvent('home'),
         settings: () => onEvent('settings'),
+      },
+    })),
+  },
+  {
+    heading: 'Settings',
+    cases: [
+      { label: 'dark', theme: 'dark', dataPath: '/home/user/.local/share/todify/lists.json' },
+      { label: 'light', theme: 'light', dataPath: '/home/user/.local/share/todify/lists.json' },
+      {
+        label: 'long data path',
+        theme: 'dark',
+        dataPath: '/home/user/.local/share/todify/' + 'NoSpacesAnywhere'.repeat(5) + '/lists.json',
+      },
+    ].map(({ label, theme, dataPath }) => ({
+      label,
+      component: Settings,
+      props: { theme, dataPath, version: '0.1.0' },
+      events: {
+        theme: (value) => onEvent('theme', value),
+        back: () => onEvent('back'),
       },
     })),
   },
