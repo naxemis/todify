@@ -71,10 +71,12 @@ const groups = [
     cases: [
       { label: 'typicalLists', lists: typicalLists },
       { label: 'noLists', lists: noLists },
-    ].map(({ label, lists }) => ({
+      { label: 'typicalLists, read-only', lists: typicalLists, readOnly: true },
+      { label: 'noLists, read-only', lists: noLists, readOnly: true },
+    ].map(({ label, lists, readOnly }) => ({
       label,
       component: Home,
-      props: { lists },
+      props: { lists, readOnly },
       events: {
         select: (id) => onEvent('select', id),
         create: () => onEvent('create'),
@@ -93,10 +95,17 @@ const groups = [
       { label: 'noCards', lists: noCards, selectedId: noCards[0].id },
       { label: 'longNames', lists: longNames, selectedId: longNames[0].id },
       { label: 'manyCards', lists: manyCards, selectedId: manyCards[0].id },
-    ].map(({ label, lists, selectedId }) => ({
+      {
+        label: 'typicalLists, first selected, read-only',
+        lists: typicalLists,
+        selectedId: typicalLists[0].id,
+        readOnly: true,
+      },
+      { label: 'longNames, read-only', lists: longNames, selectedId: longNames[0].id, readOnly: true },
+    ].map(({ label, lists, selectedId, readOnly }) => ({
       label,
       component: List,
-      props: { lists, selectedId },
+      props: { lists, selectedId, readOnly },
       events: {
         select: (id) => onEvent('select', id),
         delete: (id) => onEvent('delete', id),

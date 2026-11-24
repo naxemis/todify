@@ -9,7 +9,9 @@
   the parent decides what is selected.
   The screen finds the selected list by `selectedId` in `lists`. When nothing is
   selected, or the id matches no list, it shows an empty state: "Select a list
-  from the sidebar".
+  from the sidebar" (without the read-only label).
+  Also receives `readOnly` (Boolean, default false; true when the app runs in
+  read-only mode). It adds a "Read-only" label to the right of the list name.
   Scrolling of the board is handled by Table; the header stays in place.
   Edge cases: a long list name stays on one line and is clipped without an
   ellipsis; a list without columns shows "No columns yet" (from Table); a column
@@ -28,6 +30,8 @@ const props = defineProps({
   lists: { type: Array, required: true },
   /** Id of the selected list, or null when nothing is selected. */
   selectedId: { type: Number, default: null },
+  /** True when the app runs in read-only mode: shows the "Read-only" label. */
+  readOnly: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['select', 'delete', 'home', 'settings']);
@@ -46,7 +50,10 @@ const selectedList = computed(() => props.lists.find((list) => list.id === props
     @settings="emit('settings')"
   >
     <template v-if="selectedList">
-      <div class="header">{{ selectedList.name }}</div>
+      <div class="header">
+        <span class="name">{{ selectedList.name }}</span>
+        <span v-if="readOnly" class="read-only">Read-only</span>
+      </div>
       <div class="board">
         <Table :list="selectedList" />
       </div>
@@ -60,12 +67,29 @@ const selectedList = computed(() => props.lists.find((list) => list.id === props
 .header {
   box-sizing: border-box;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--screen-header-item-gap);
   padding: var(--window-padding) var(--window-padding) 0;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
   font-size: var(--font-size-screen-title);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
+}
+
+.read-only {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-read-only);
 }
 
 /* Table fills its parent, so this wrapper takes the rest of the height. */

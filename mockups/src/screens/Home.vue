@@ -4,7 +4,9 @@
   that tells the user to pick a list in the sidebar, with a summary of all
   lists under it (for example "4 lists · 9 columns · 11 cards"). The lists themselves are
   only in the sidebar.
-  Receives `lists` (all lists, in display order). Holds no state of its own.
+  Receives `lists` (all lists, in display order) and `readOnly` (Boolean,
+  default false; true when the app runs in read-only mode). Holds no state of
+  its own.
   Emits `select` (id of the clicked sidebar item), `delete` (id of the list
   whose "×" was clicked), `home` and `settings` (no parameter), each forwarded
   from SidebarLayout unchanged. Emits `create` (no parameter) when "New list"
@@ -16,7 +18,8 @@
   `create`.
   Edge cases: no lists hides "New list" from the header and shows the empty
   state "No lists yet" with a "Create your first list" button instead of the
-  hint; one list, column or card uses the singular ("1 list", "1 column",
+  hint. In read-only mode the header shows a "Read-only" label instead of
+  "New list", and the empty state has no button; one list, column or card uses the singular ("1 list", "1 column",
   "1 card"), and zero is plural ("0 columns").
   Counterpart in the GUI: gui/src/screens/home.rs.
 -->
@@ -28,6 +31,8 @@ import SidebarLayout from './SidebarLayout.vue';
 defineProps({
   /** @type {import('vue').PropType<import('../fixtures/model.js').List[]>} */
   lists: { type: Array, required: true },
+  /** True when the app runs in read-only mode: no list creation. */
+  readOnly: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['select', 'create', 'delete', 'home', 'settings']);
@@ -64,7 +69,8 @@ function summary(lists) {
     <div class="content">
       <div class="header">
         <span class="title">Lists</span>
-        <Button v-if="lists.length > 0" variant="primary" @click="emit('create')">New list</Button>
+        <span v-if="readOnly" class="read-only">Read-only</span>
+        <Button v-else-if="lists.length > 0" variant="primary" @click="emit('create')">New list</Button>
       </div>
       <div v-if="lists.length > 0" class="empty">
         <span class="hint">Select a list in the sidebar to start working</span>
@@ -72,7 +78,7 @@ function summary(lists) {
       </div>
       <div v-else class="empty">
         <span class="empty-text">No lists yet</span>
-        <Button variant="primary" @click="emit('create')">Create your first list</Button>
+        <Button v-if="!readOnly" variant="primary" @click="emit('create')">Create your first list</Button>
       </div>
     </div>
   </SidebarLayout>
@@ -95,6 +101,7 @@ function summary(lists) {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: var(--screen-header-item-gap);
 }
 
 .title {
@@ -102,6 +109,14 @@ function summary(lists) {
   font-size: var(--font-size-screen-title);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
+}
+
+.read-only {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-read-only);
 }
 
 /* Centered block under the header: the hint with the summary, or the empty state. */

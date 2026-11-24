@@ -43,6 +43,7 @@
   --sidebar-padding: 8px; /* inside the sidebar */
   --sidebar-item-gap: 4px; /* between lists in the sidebar */
   --screen-header-gap: 12px; /* between a screen header and its content */
+  --screen-header-item-gap: 8px; /* between the items of a screen header row */
   --empty-state-gap: 12px; /* between the lines and the button of a screen's centered block, e.g. the Home hint */
   --settings-section-gap: 16px; /* between the sections of the Settings screen */
   --settings-label-gap: 4px; /* between a Settings section label and its content */
@@ -121,6 +122,7 @@
   --color-danger-button-hover: #462b4d;
   --color-danger-button-text: #f08fa0;
   --color-toast-title: #e8cf96; /* warning title in the toast */
+  --color-read-only: #e8cf96; /* read-only mode indicator in a screen header */
   --color-backdrop: rgba(0, 0, 0, 0.5); /* dims the screen under a dialog */
   --color-shadow: rgba(0, 0, 0, 0.4); /* dialog and toast shadow */
 }
