@@ -6,8 +6,10 @@
   Receives `variant`, which must be one of the three values above; any other
   value is rejected by the validator. Receives `fill` (default false): when
   true, the button takes the full width of its parent and the label is aligned
-  to the left; in Iced this is `width(Length::Fill)`. Holds no state of its
-  own. Emits `click`, without a parameter, when the button is clicked; the
+  to the left; in Iced this is `width(Length::Fill)`. Receives `compact`
+  (default false): when true, the button has no padding, so its box is only
+  the label, for a small icon-like button such as the "×" of the toast; in
+  Iced this is `padding(0)`. Holds no state of its own. Emits `click`, without a parameter, when the button is clicked; the
   parent decides what the click means.
   Edge cases: a long label stays on one line and never wraps, so the button
   grows wider instead of taller. The secondary variant never has a background,
@@ -25,13 +27,15 @@ defineProps({
   },
   /** Take the full width of the parent, with the label aligned to the left. */
   fill: { type: Boolean, default: false },
+  /** No padding: the button box is only the label. */
+  compact: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['click']);
 </script>
 
 <template>
-  <button class="button" :class="[variant, { fill }]" type="button" @click="emit('click')">
+  <button class="button" :class="[variant, { fill, compact }]" type="button" @click="emit('click')">
     <slot />
   </button>
 </template>
@@ -53,6 +57,11 @@ const emit = defineEmits(['click']);
   box-sizing: border-box;
   width: 100%;
   text-align: left;
+}
+
+/* Counterpart of padding(0) in Iced. */
+.compact {
+  padding: 0;
 }
 
 .primary {

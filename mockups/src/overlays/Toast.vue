@@ -13,9 +13,11 @@
   The width follows the widest line (title row or message), between
   `--toast-min-width` and `--toast-max-width`; past the maximum the text wraps.
   Edge cases: a long title and a long message wrap, including long paths
-  without spaces; the title stays vertically centered against the "×", which
-  stays on the right.
-  The "×" is the shared Button widget (secondary variant).
+  without spaces; the "×" stays at the top right, level with the first line
+  of the title.
+  The "×" is the shared Button widget (secondary variant, compact). Compact
+  means no padding, so the "×" is a plain line of text like the title and
+  needs no offsets: every inset of the toast is --toast-padding.
   Counterpart in the GUI: gui/src/overlays/toast.rs.
 -->
 
@@ -37,7 +39,7 @@ const emit = defineEmits(['dismiss']);
     <div class="header">
       <div class="title">{{ title }}</div>
       <div class="close">
-        <Button variant="secondary" @click="emit('dismiss')">×</Button>
+        <Button variant="secondary" compact @click="emit('dismiss')">×</Button>
       </div>
     </div>
     <div class="message">{{ message }}</div>
@@ -59,11 +61,14 @@ const emit = defineEmits(['dismiss']);
   box-shadow: 0 var(--overlay-shadow-offset-y) var(--overlay-shadow-blur) var(--color-shadow);
 }
 
-/* The title is centered vertically against the "×" button. */
+/* The title and the "×" have the same line height, so aligning them to the
+   top puts the "×" level with the first line of the title. In Iced: a row
+   aligned to the top with spacing TOAST_CLOSE_GAP. */
 .header {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  gap: var(--toast-close-gap);
 }
 
 /* Takes the rest of the width; `min-width: 0` lets the flex item shrink so long words wrap. */

@@ -62,6 +62,7 @@
   --toast-padding: 12px;
   --toast-offset: 16px; /* distance from the window edge */
   --toast-gap: 4px; /* between the title row and the message */
+  --toast-close-gap: 8px; /* between the title and the "×" button */
   --frame-width: 640px; /* must match window_size in gui/src/main.rs */
   --frame-height: 480px;
 
